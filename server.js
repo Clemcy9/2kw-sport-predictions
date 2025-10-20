@@ -5,6 +5,7 @@ import express from "express";
 import connectDb from "./config/db.js";
 import blogRoutes from "./routes/blogsRoutes.js"
 import predictionRoutes from "./routes/predictionRoutes.js";
+import matchRoutes from "./routes/matchRoutes.js";
 
 const app = express()
 app.use(express.json())
@@ -17,7 +18,8 @@ connectDb()
 app.use("/api/blogs", blogRoutes)
 //connect prediction routes
 app.use("/api/predictions", predictionRoutes)
-
+//connect match to routes
+app.use("/api/matches", matchRoutes)
 
 app.listen(process.env.PORT, () => console.log("server running"))
 

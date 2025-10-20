@@ -1,6 +1,8 @@
 import express from "express"
-import {matchPredicitions} from "../controllers/matchControllers.js"
+import getMatches from "../controllers/matchControllers.js"
 
 const router = express.Router()
 
-router.get("/", matchPredicitions)
+router.get("/", getMatches)
+
+export default router

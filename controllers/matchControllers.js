@@ -13,6 +13,7 @@ export const getMatches = async (req, res) => {
         if(!allMatches) return res.status(404).json({
             message: "no match found"
         })
+        
         res.status(200).json({
             success: true,
             message: "matches gotten successfully",

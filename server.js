@@ -6,10 +6,15 @@ import connectDb from "./config/db.js";
 import blogRoutes from "./routes/blogsRoutes.js"
 import predictionRoutes from "./routes/predictionRoutes.js";
 import matchRoutes from "./routes/matchRoutes.js";
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './docs/swagger.js';
 
-const app = express()
-app.use(express.json())
-app.use(express.urlencoded({extends: true}))
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extends: true }));
+
+// swagger route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //connect db
 connectDb()

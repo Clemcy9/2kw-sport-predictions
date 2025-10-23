@@ -102,3 +102,30 @@ export const forgotPasswordController = async (req, res) => {
     res.status(500).json({ msg: "An error occurred", error: error.message });
   }
 };
+
+export const resetPasswordController = async (req, res) => {
+  console.log("password reset route hit");
+  // const { token } = req.params; //email will be more robust as some user's token might not exist or is expired
+  const { password } = req.body;
+  const { email } = req.params;
+
+  try {
+    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // const user = await User.findById(decoded.id);
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ error: "invalid user" });
+    }
+    user.password = password;
+    await user.save();
+    res.status(200).json({ msg: "password reset successfull" });
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return res
+        .status(400)
+        .json({ err: "token has expired, pls request new reset link" });
+    }
+    res.status(400).json({ err: "Invalid or expired token" });
+  }
+};

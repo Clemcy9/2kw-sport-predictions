@@ -4,6 +4,7 @@ import express from "express";
 import User from "../models/userModel.js";
 import authMiddleware, { createToken } from "../middleware/authMiddleware.js";
 import { Router } from "express";
+import { registerController } from "../controllers/authControllers.js";
 
 const router = Router();
 

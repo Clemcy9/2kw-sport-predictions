@@ -138,3 +138,51 @@ router.post("/login");
 
  * */
 router.post("/forgot-password");
+
+// password reset route
+
+/**
+ * @swagger
+ * /api/v2/auth/reset-password/{email}:
+ *   post:
+ *     summary: Reset password, identify associated user with token or email
+ *     description: Endpoint that does the actual password reset using the token sent to the user's email.
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *         description: user's email for password reset
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - password
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 example: "to God be the Glory"
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               example:
+ *                 msg: "password reset successful"
+ *       400:
+ *         description: Invalid or expired token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               example:
+ *                 err: "Invalid or expired token"
+ */
+router.post("/reset-password/:email");

@@ -12,7 +12,7 @@ import {
   resetPasswordController,
 } from "../controllers/authControllers.js";
 
-const router = Router();
+const router = express.Router();
 
 /**
  * @swagger
@@ -37,9 +37,9 @@ const router = Router();
  *               name: "Aboy CM"
  *               email: "aboy_cm@gmail.com"
  *               password: "no guilt in life"
- *   responses:
- *     201:
- *       description: User registered successfully
+ *     responses:
+ *       201:
+ *         description: User registered successfully
  */
 router.post("/register", registerController);
 
@@ -124,7 +124,7 @@ router.post("/login", loginController);
 // forget-password route
 /**
  * @swagger
- * /api/v2/auth/forgot-password:
+ * /api/v1/auth/forgot-password:
  *   post:
  *     summary: Request password reset, recieve token in email
  *     description: Endpoint to request for password reset, email is required
@@ -149,7 +149,7 @@ router.post("/forgot-password", forgotPasswordController);
 
 /**
  * @swagger
- * /api/v2/auth/reset-password/{email}:
+ * /api/v1/auth/reset-password/{email}:
  *   post:
  *     summary: Reset password, identify associated user with token or email
  *     description: Endpoint that does the actual password reset using the token sent to the user's email.

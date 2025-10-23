@@ -18,7 +18,7 @@ app.get("/", async (req, res) => {
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // authentication routes
-app.use("api/v1/auth", authRoutes);
+app.use("/api/v1/auth", authRoutes);
 //connect blog routes
 app.use("/api/blogs", blogRoutes);
 

@@ -1,5 +1,6 @@
 import { createToken } from "../middleware/authMiddleware.js";
 import User from "../models/userModel.js";
+import sendVerificationMail from "../utils/sendVerificationMail.js";
 
 export const registerController = async (req, res) => {
   const { name, email, password } = req.body;

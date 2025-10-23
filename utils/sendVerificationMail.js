@@ -1,6 +1,6 @@
 import { sendEmail } from "./sendEmail.js";
 import { generateVerificationCode } from "./generateVerificationCode.js";
-import { Verification } from "../models/user.js";
+import { Verification } from "../models/userModel.js";
 
 export async function sendVerificationMail(user, is_dummy = true) {
   try {

@@ -36,10 +36,3 @@ const router = Router();
  *       description: User registered successfully
  */
 router.post("/register", registerController);
-// confirm email route
-
-// login route
-
-// forget-password route
-
-// password reset route

@@ -1,5 +1,5 @@
-import { createToken } from "../middleware/authMiddleware";
-import User from "../models/userModel";
+import { createToken } from "../middleware/authMiddleware.js";
+import User from "../models/userModel.js";
 
 export const registerController = async (req, res) => {
   const { name, email, password } = req.body;

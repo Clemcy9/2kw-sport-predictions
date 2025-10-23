@@ -36,7 +36,7 @@ export const registerController = async (req, res) => {
   }
 };
 
-export const confirmEmail = async (req, res) => {
+export const confirmEmailController = async (req, res) => {
   try {
     const { token } = req.body;
     const { userId } = req.params;
@@ -80,5 +80,25 @@ export const login = async (req, res) => {
     res.status(200).json({ msg: "login successfully", token: token });
   } catch (error) {
     res.status(500).json({ msg: "Server error", error });
+  }
+};
+
+export const forgotPasswordController = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ error: "Email does not exist" });
+    }
+
+    const token = await sendVerificationMail(user);
+
+    res
+      .status(200)
+      .json({ ...token, msg: "Check your email for verification code" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "An error occurred", error: error.message });
   }
 };

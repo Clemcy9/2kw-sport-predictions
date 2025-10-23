@@ -1,3 +1,4 @@
+import { createToken } from "../middleware/authMiddleware";
 import User from "../models/userModel";
 
 export const registerController = async (req, res) => {
@@ -61,7 +62,7 @@ export const confirmEmailController = async (req, res) => {
   }
 };
 
-export const login = async (req, res) => {
+export const loginController = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ msg: "Please provide email and password" });

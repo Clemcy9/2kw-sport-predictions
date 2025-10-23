@@ -4,7 +4,13 @@ import express from "express";
 import User from "../models/userModel.js";
 import authMiddleware, { createToken } from "../middleware/authMiddleware.js";
 import { Router } from "express";
-import { registerController } from "../controllers/authControllers.js";
+import {
+  confirmEmailController,
+  forgotPasswordController,
+  loginController,
+  registerController,
+  resetPasswordController,
+} from "../controllers/authControllers.js";
 
 const router = Router();
 
@@ -73,7 +79,7 @@ router.post("/register", registerController);
  *       500:
  *         description: Server error during verification
  */
-router.post("/confirm-email/:userId");
+router.post("/confirm-email/:userId", confirmEmailController);
 
 // login route
 
@@ -113,7 +119,7 @@ router.post("/confirm-email/:userId");
  *       401:
  *         description: Unauthorized (invalid credentials)
  */
-router.post("/login");
+router.post("/login", loginController);
 
 // forget-password route
 /**
@@ -137,7 +143,7 @@ router.post("/login");
  *         description: request email does not exist
 
  * */
-router.post("/forgot-password");
+router.post("/forgot-password", forgotPasswordController);
 
 // password reset route
 
@@ -185,4 +191,4 @@ router.post("/forgot-password");
  *               example:
  *                 err: "Invalid or expired token"
  */
-router.post("/reset-password/:email");
+router.post("/reset-password/:email", resetPasswordController);

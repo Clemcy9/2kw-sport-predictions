@@ -114,3 +114,27 @@ router.post("/confirm-email/:userId");
  *         description: Unauthorized (invalid credentials)
  */
 router.post("/login");
+
+// forget-password route
+/**
+ * @swagger
+ * /api/v2/auth/forgot-password:
+ *   post:
+ *     summary: Request password reset, recieve token in email
+ *     description: Endpoint to request for password reset, email is required
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             example:
+ *               email: "clement@gmail.com"
+ *     responses:
+ *       200:
+ *         description: reset token sent to email
+ *       400:
+ *         description: request email does not exist
+
+ * */
+router.post("/forgot-password");

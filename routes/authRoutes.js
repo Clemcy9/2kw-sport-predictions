@@ -46,14 +46,14 @@ router.post("/register", registerController);
 // confirm email route
 /**
  * @swagger
- * /api/v1/auth/confirm-email/{userid}:
+ * /api/v1/auth/confirm-email/{userId}:
  *   post:
  *     summary: Confirm user's email using a verification token
  *     description: Verifies the email address of a user by matching the verification token sent to their email. Activates the user's account if valid.
  *     tags: [Auth]
  *     parameters:
  *       - in: path
- *         name: userId
+ *         name: userid
  *         required: true
  *         schema:
  *           type: string

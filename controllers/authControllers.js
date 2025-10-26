@@ -1,6 +1,6 @@
 import { createToken } from "../middleware/authMiddleware.js";
-import User from "../models/userModel.js";
-import sendVerificationMail from "../utils/sendVerificationMail.js";
+import User, { Verification } from "../models/userModel.js";
+import { sendVerificationMail } from "../utils/sendVerificationMail.js";
 
 export const registerController = async (req, res) => {
   const { name, email, password } = req.body;
@@ -42,10 +42,11 @@ export const confirmEmailController = async (req, res) => {
   try {
     const { token } = req.body;
     const { userId } = req.params;
+    console.log("user id is:", userId, "\ntoken is:", token);
 
     // Check for matching verification record
     const record = await Verification.findOne({ userId, code: token });
-
+    console.log("record:", record);
     if (!record || record.expiresAt < Date.now()) {
       return res.status(400).json({ msg: "Invalid or expired token" });
     }

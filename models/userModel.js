@@ -59,6 +59,6 @@ const verificationSchema = new mongoose.Schema({
 });
 
 // this automatically delete token after expiration
-verificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+verificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 60 });
 
 export const Verification = mongoose.model("Verification", verificationSchema);

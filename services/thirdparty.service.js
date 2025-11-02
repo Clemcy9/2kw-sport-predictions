@@ -1,82 +1,97 @@
 import axios from "axios";
-import { getCached } from "./cache.service.js";
-const { RAPIDSPORT_API_KEY, RAPIDSPORT_BASE_UR } = process.env;
+import dotenv from "dotenv";
+dotenv.config();
+import { getCached, setCached } from "./cache.service.js";
+const { RAPIDSPORT_API_KEY, RAPIDSPORT_BASE_URL, RAPIDSPORT_API_HOST } =
+  process.env;
+
+console.log("base url:", RAPIDSPORT_BASE_URL);
 
 const api_client = axios.create({
-  baseURL: RAPIDSPORT_BASE_UR,
+  baseURL: RAPIDSPORT_BASE_URL,
   headers: {
-    Authorization: `Bearer ${RAPIDSPORT_API_KEY}`,
+    // Authorization: `Bearer ${RAPIDSPORT_API_KEY}`,
+    "x-RapidAPI-Host": RAPIDSPORT_API_HOST,
+    "x-apisports-key": RAPIDSPORT_API_KEY,
     Accept: "application/json",
   },
   timeout: 10000,
 });
 
-// endpoints are: /fixtures, /predictions, /livescore, /standings, /player/topscorer
-
 async function fetchFixtures(date) {
-  // date format 'YYYY-MM-DD'
+  console.log("base url:", RAPIDSPORT_BASE_URL);
   const params = {};
   if (date) params.date = date;
-  // check if requested fixture in cache then serve else make actual api call
-  const response = await getCached(`fixtures:${today}`, today_fixtures);
-  if (response) return response;
-  api_client
-    .get("/fixtures", { params })
-    .then((res) => {
-      return res.data;
-    })
-    .catch((error) => {
-      if (error.response)
-        console.log("FetchFixturesError:", error.response.data);
-      if (error.request) console.log("FetchFixturesError:", error.request);
-      else console.log("FetchFixturesError:", error.message);
-    });
+
+  // check cache
+  const cached = await getCached("fixtures", params);
+  if (cached) return cached;
+
+  try {
+    const res = await api_client.get("/fixtures", params);
+    await setCached("fixtures", res.data, params);
+    return res.data;
+  } catch (error) {
+    if (error.response)
+      console.log("FetchFixturesError1:", error.response.data);
+    else if (error.request) console.log("FetchFixturesError2:", error.request);
+    else console.log("FetchFixturesError3:", error.message);
+  }
 }
 
 async function fetchPredictions(matchId) {
   const params = { matchId };
-  api_client
-    .get("/predictions", { params })
-    .then((res) => {
-      return res.data;
-    })
-    .cathch((error) => {
-      if (error.response)
-        console.log("FetchPredictionError:", error.response.data);
-      if (error.request) console.log("FetchPredictionError:", error.request);
-      else console.log("FetchPredictionError:", error.message);
-    });
+  const cached = await getCached("predictions", { matchId });
+
+  if (cached) return cached;
+
+  try {
+    const res = await api_client.get("/predictions", { params });
+    await setCached("predictions", res.data, { matchId });
+    return res.data;
+  } catch (error) {
+    if (error.response)
+      console.log("FetchPredictionError1:", error.response.data);
+    if (error.request) console.log("FetchPredictionError2:", error.request);
+    else console.log("FetchPredictionError3:", error.message);
+  }
 }
 
 async function fetchLiveScore() {
-  api_client
-    .get("/livescore")
-    .then((res) => {
-      return res.data;
-    })
-    .cathch((error) => {
-      if (error.response)
-        console.log("FetchLiveScoreError:", error.response.data);
-      if (error.request) console.log("FetchLiveScoreError:", error.request);
-      else console.log("FetchLiveScoreError:", error.message);
-    });
+  const cached = await getCached("predictions");
+
+  if (cached) return cached;
+
+  try {
+    const res = await api_client.get("/livescore");
+    await setCached("livescore", res.data);
+    return res.data;
+  } catch (error) {
+    if (error.response)
+      console.log("FetchLiveScoreError1:", error.response.data);
+    if (error.request) console.log("FetchLiveScoreError2:", error.request);
+    else console.log("FetchLiveScoreError3:", error.message);
+  }
 }
 
-async function fetcthStandings(leagueId, season) {
+async function fetchStandings(leagueId, season) {
   const params = {};
   if (leagueId) params.leagueId = leagueId;
   if (season) params.season = season;
-  api_client
-    .get("/standings", { params })
-    .then((res) => {
-      return res.data;
-    })
-    .cathch((error) => {
-      if (error.response)
-        console.log("FetchStandingsError:", error.response.data);
-      if (error.request) console.log("FetchStandingsError:", error.request);
-      else console.log("FetchStandingsError:", error.message);
-    });
+
+  const cached = await getCached("standings", params);
+  if (cached) return cached;
+
+  try {
+    const res = await api_client.get("/standings", params);
+    await setCached("standings", res.data, params);
+    return res.data;
+  } catch (error) {
+    if (error.response)
+      console.log("FetchStandingsError1:", error.response.data);
+    if (error.request) console.log("FetchStandingsError2:", error.request);
+    else console.log("FetchStandingsError3:", error.message);
+  }
 }
 
-export { fetchFixtures, fetchLiveScore, fetchPredictions, fetcthStandings };
+export { fetchFixtures, fetchLiveScore, fetchPredictions, fetchStandings };

@@ -1,5 +1,6 @@
-import { redisClient } from "../config/redis";
-
+import { redisClient } from "../config/redis.js";
+import dotenv from "dotenv";
+dotenv.config();
 const TTL = parseInt(process.env.CACHE_TTL_SECONDS);
 
 function keyfor(endpoint, params = {}) {
@@ -8,10 +9,13 @@ function keyfor(endpoint, params = {}) {
     .sort()
     .map((k) => `${k}=${params[k]}`)
     .join("&");
-  return `rapid:{endpoint}${paramString ? ":" + paramString : ""}`;
+  const cache_key = `rapid:${endpoint}${paramString ? ":" + paramString : ""}`;
+  console.log("cache key:", cache_key);
+  return cache_key;
 }
 
 async function getCached(endpoint, params) {
+  console.log("ttl is:", TTL);
   const key = keyfor(endpoint, params);
   const data = await redisClient.get(key);
   if (!data) return null;

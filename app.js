@@ -4,6 +4,7 @@ import express from "express";
 import blogRoutes from "./routes/blogsRoutes.js";
 import predictionRoutes from "./routes/predictionRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -24,5 +25,8 @@ app.use("/api/blogs", blogRoutes);
 
 //connect prediction routes
 app.use("/api/predictions", predictionRoutes);
+
+// admin fixtures
+app.use("/api/admin", adminRoutes);
 
 export default app;

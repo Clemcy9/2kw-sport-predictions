@@ -16,8 +16,10 @@ function startBackgroundTask() {
   setInterval(async () => {
     try {
       // fixtures for today
+      // todays date
+      const today = new Date().toISOString().split("T")[0];
       const today_fixtures = await fetchFixtures(); //we may have to put date if need be
-      await setCached("fixtures:today", today_fixtures);
+      // await setCached(`fixtures:${today}`, today_fixtures); //moving this to inside fetchfixtures to enable auto caching
       // might have to put calls for 2morrow and yesterday's fixtures
 
       // livescore

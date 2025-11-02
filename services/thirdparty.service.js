@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getCached } from "./cache.service.js";
 const { RAPIDSPORT_API_KEY, RAPIDSPORT_BASE_UR } = process.env;
 
 const api_client = axios.create({
@@ -16,12 +17,15 @@ async function fetchFixtures(date) {
   // date format 'YYYY-MM-DD'
   const params = {};
   if (date) params.date = date;
+  // check if requested fixture in cache then serve else make actual api call
+  const response = await getCached(`fixtures:${today}`, today_fixtures);
+  if (response) return response;
   api_client
     .get("/fixtures", { params })
     .then((res) => {
       return res.data;
     })
-    .cathch((error) => {
+    .catch((error) => {
       if (error.response)
         console.log("FetchFixturesError:", error.response.data);
       if (error.request) console.log("FetchFixturesError:", error.request);

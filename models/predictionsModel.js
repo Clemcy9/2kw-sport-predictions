@@ -23,3 +23,28 @@ const predictionSchema = mongoose.Schema(
 );
 const Prediction = mongoose.model("Prediction", predictionSchema);
 export default Prediction;
+
+const ApprovedPredictionSchema = new mongoose.Schema(
+  {
+    matchId: { type: String, required: true, index: true },
+    leagueId: { type: String },
+    season: { type: String },
+    selections: [
+      {
+        sourcePredictionId: String, // id from third-party
+        market: String, // e.g., "1X2", "over/under", "both_to_score"
+        pick: String, // e.g., "home", "draw", "over"
+        odd: Number,
+      },
+    ],
+    category: {
+      type: String,
+      enum: ["banker", "sure_odds", "free_tip", "two_sure_odds"],
+      required: true,
+    },
+    adminId: { type: String }, // store admin identifier
+    notes: { type: String },
+    createdAt: { type: Date, default: Date.now },
+  },
+  { timestamps: true }
+);

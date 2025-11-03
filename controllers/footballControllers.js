@@ -1,0 +1,49 @@
+import {
+  fetchFixtures,
+  fetchLiveScore,
+  fetchPredictions,
+  fetchStandings,
+} from "../services/thirdparty.service.js";
+async function getAllFixtures(req, res) {
+  const today = new Date().toISOString().split("T")[0];
+  const date = req.body?.date || today;
+  const fixtures = await fetchFixtures(date);
+  res.status(200).json({ message: "successful", data: fixtures });
+}
+
+async function getPredictions(req, res) {
+  const fixture_id = req.params.fixture_id;
+  if (!fixture_id)
+    return res.status(400).json({ message: "error, fixture id required" });
+
+  try {
+    const predictions = await fetchPredictions(fixture_id);
+    res.status(200).json({ message: "sucessful", data: predictions });
+  } catch (error) {
+    console.log("error getting predictions:", error);
+    res.status(500).json({ message: "errror occured", error });
+  }
+}
+
+async function getLivescore(req, res) {
+  try {
+    const livescore = await fetchLiveScore();
+    res.status(200).json({ message: "successful", data: livescore });
+  } catch (error) {
+    res.status(500).json({ message: "error occured", error });
+  }
+}
+
+async function getStandings(req, res) {
+  const { leagueId, season } = req.params;
+  if (!leagueId)
+    return res.status(400).json({ message: "leagueId is required" });
+
+  try {
+    const standings = await fetchStandings(leagueId, season);
+    res.status(200).json({ message: "successful", data: standings });
+  } catch (error) {
+    res.status(500).json({ message: "error occured", error });
+  }
+}
+export { getAllFixtures, getPredictions, getLivescore, getStandings };

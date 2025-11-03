@@ -2,9 +2,9 @@ import swaggerSpec from "./docs/swagger.js";
 import swaggerUi from "swagger-ui-express";
 import express from "express";
 import blogRoutes from "./routes/blogsRoutes.js";
-import predictionRoutes from "./routes/predictionRoutes.js";
+import adminPredictionRoutes from "./routes/predictionsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
-import adminRoutes from "./routes/adminRoutes.js";
+import footballRoutes from "./routes/footballRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -20,13 +20,14 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // authentication routes
 app.use("/api/v1/auth", authRoutes);
-//connect blog routes
-app.use("/api/blogs", blogRoutes);
 
-//connect prediction routes
-app.use("/api/predictions", predictionRoutes);
+//connect blog routes
+app.use("/api/v1/blogs", blogRoutes);
+
+//admin approved prediction routes
+app.use("/api/v1/admin/predictions", adminPredictionRoutes);
 
 // admin fixtures
-app.use("/api/admin", adminRoutes);
+app.use("/api/v1/football", footballRoutes);
 
 export default app;

@@ -2,7 +2,7 @@ import mongoose, { Types } from "mongoose";
 import User from "./userModel.js";
 import Match from "./matchingModel.js";
 
-const approvedPredictionSchema = mongoose.Schema(
+const adminPredictionSchema = mongoose.Schema(
   {
     user_id: { type: mongoose.Types.ObjectId, ref: "User", required: true },
     match_id: { type: mongoose.Types.ObjectId, ref: "Match" },
@@ -24,11 +24,11 @@ const approvedPredictionSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
-const ApprovedPrediction = mongoose.model(
-  "ApprovedPrediction",
-  approvedPredictionSchema
+const AdminPrediction = mongoose.model(
+  "AdminPrediction",
+  adminPredictionSchema
 );
-export default ApprovedPrediction;
+export default AdminPrediction;
 
 // const ApprovedPredictionSchema = new mongoose.Schema(
 //   {

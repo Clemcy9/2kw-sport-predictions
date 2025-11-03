@@ -3,10 +3,14 @@ dotenv.config(); // this will load the .env file to process
 import app from "./app.js";
 import connectDb from "./config/db.js";
 import { connectRedis } from "./config/redis.js";
+import { startBackgroundTask } from "./services/background.service.js";
 
 //connect db
 connectDb();
 
 // start redis
 await connectRedis();
+
+// start background service
+// await startBackgroundTask();
 app.listen(process.env.PORT, () => console.log("server running"));

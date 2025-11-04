@@ -1,8 +1,13 @@
-import express from "express"
-import { createPrediction, getPrediction, getPedictionId, updatePrediction, deletePrediction } from "../controllers/predictionControllers.js"
-
-const router = express.Router()
-
+import express from "express";
+import {
+  createPrediction,
+  getPrediction,
+  getPedictionId,
+  updatePrediction,
+  deletePrediction,
+} from "../controllers/predictionControllers.js";
+import authMiddleware from "../middleware/authMiddleware.js";
+const router = express.Router();
 
 /**
  * @swagger
@@ -54,7 +59,6 @@ const router = express.Router()
  *         updatedAt: "2025-10-21T10:45:00Z"
  */
 
-
 /**
  * @swagger
  * /api/predictions:
@@ -86,7 +90,7 @@ const router = express.Router()
  *       500:
  *         description: Server error or prediction creation failed
  */
-router.post("/", createPrediction)
+router.post("/", authMiddleware, createPrediction);
 
 /**
  * @swagger
@@ -128,8 +132,7 @@ router.post("/", createPrediction)
  *       500:
  *         description: Internal server error
  */
-router.get("/", getPrediction)
-
+router.get("/", getPrediction);
 
 /**
  * @swagger
@@ -165,8 +168,7 @@ router.get("/", getPrediction)
  *       500:
  *         description: Internal server error
  */
-router.get("/:id", getPedictionId)
-
+router.get("/:id", getPedictionId);
 
 /**
  * @swagger
@@ -208,8 +210,7 @@ router.get("/:id", getPedictionId)
  *       500:
  *         description: Internal server error
  */
-router.put("/:id", updatePrediction)
-
+router.put("/:id", updatePrediction);
 
 /**
  * @swagger
@@ -243,6 +244,6 @@ router.put("/:id", updatePrediction)
  *       500:
  *         description: Internal server error
  */
-router.delete("/:id", deletePrediction)
+router.delete("/:id", deletePrediction);
 
-export default router
+export default router;

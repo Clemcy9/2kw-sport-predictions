@@ -3,6 +3,10 @@ const { REDIS_URL } = process.env;
 
 const redisClient = createClient({
   url: REDIS_URL || "redis://localhost:6379",
+  socket: {
+    tls: true,
+    rejectUnauthorized: false,
+  },
 });
 
 redisClient.on("error", (err) => console.log("redis client error:", err));

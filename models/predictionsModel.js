@@ -1,6 +1,44 @@
 import mongoose, { Types } from "mongoose";
 
-const predictionSchema = new mongoose.Schema();
+const PredictionSchema = new mongoose.Schema(
+  {
+    league: {
+      id: Number,
+      name: String,
+      country: String,
+      logo: String,
+      flag: String,
+      season: Number,
+    },
+    fixture: {
+      id: Number,
+      timezone: String,
+      date: Date,
+      timestamp: Number,
+    },
+    bookmaker: {
+      id: Number,
+      name: String,
+      bets: [
+        {
+          id: Number,
+          name: String,
+          values: [
+            {
+              value: mongoose.Schema.Types.Mixed,
+              odd: String,
+              percentage: String, //dynamically calculated
+            },
+          ],
+        },
+      ],
+    },
+    update: Date,
+  },
+  { timestamps: true }
+);
+
+export const Prediction = mongoose.model("Prediction", PredictionSchema);
 
 const adminPredictionSchema = new mongoose.Schema(
   {

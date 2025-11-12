@@ -1,9 +1,6 @@
 import express from "express";
 import {
   createPrediction,
-  getPrediction,
-  getPedictionId,
-  updatePrediction,
   deletePrediction,
 } from "../controllers/predictionControllers.js";
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -92,125 +89,125 @@ const router = express.Router();
  */
 router.post("/", authMiddleware, createPrediction);
 
-/**
- * @swagger
- * /api/predictions:
- *   get:
- *     summary: Retrieve all predictions (optionally filtered)
- *     tags: [Predictions]
- *     parameters:
- *       - in: query
- *         name: matchId
- *         schema:
- *           type: string
- *         required: false
- *         description: Filter predictions by match ID
- *       - in: query
- *         name: date
- *         schema:
- *           type: string
- *           format: date
- *         required: false
- *         description: Filter predictions created on or after this date
- *     responses:
- *       200:
- *         description: Successfully retrieved predictions
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Prediction'
- *       404:
- *         description: No predictions found
- *       500:
- *         description: Internal server error
- */
-router.get("/", getPrediction);
+// /**
+//  * @swagger
+//  * /api/predictions:
+//  *   get:
+//  *     summary: Retrieve all predictions (optionally filtered)
+//  *     tags: [Predictions]
+//  *     parameters:
+//  *       - in: query
+//  *         name: matchId
+//  *         schema:
+//  *           type: string
+//  *         required: false
+//  *         description: Filter predictions by match ID
+//  *       - in: query
+//  *         name: date
+//  *         schema:
+//  *           type: string
+//  *           format: date
+//  *         required: false
+//  *         description: Filter predictions created on or after this date
+//  *     responses:
+//  *       200:
+//  *         description: Successfully retrieved predictions
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 success:
+//  *                   type: boolean
+//  *                   example: true
+//  *                 data:
+//  *                   type: array
+//  *                   items:
+//  *                     $ref: '#/components/schemas/Prediction'
+//  *       404:
+//  *         description: No predictions found
+//  *       500:
+//  *         description: Internal server error
+//  */
+// router.get("/", getPrediction);
 
-/**
- * @swagger
- * /api/predictions/{id}:
- *   get:
- *     summary: Retrieve a single prediction by ID
- *     tags: [Predictions]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: Prediction ID
- *     responses:
- *       200:
- *         description: Prediction retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: prediction gotten successfully
- *                 data:
- *                   $ref: '#/components/schemas/Prediction'
- *       404:
- *         description: Prediction not found
- *       500:
- *         description: Internal server error
- */
-router.get("/:id", getPedictionId);
+// /**
+//  * @swagger
+//  * /api/predictions/{id}:
+//  *   get:
+//  *     summary: Retrieve a single prediction by ID
+//  *     tags: [Predictions]
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: Prediction ID
+//  *     responses:
+//  *       200:
+//  *         description: Prediction retrieved successfully
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 success:
+//  *                   type: boolean
+//  *                   example: true
+//  *                 message:
+//  *                   type: string
+//  *                   example: prediction gotten successfully
+//  *                 data:
+//  *                   $ref: '#/components/schemas/Prediction'
+//  *       404:
+//  *         description: Prediction not found
+//  *       500:
+//  *         description: Internal server error
+//  */
+// router.get("/:id", getPedictionId);
 
-/**
- * @swagger
- * /api/predictions/{id}:
- *   put:
- *     summary: Update an existing prediction
- *     tags: [Predictions]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: Prediction ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Prediction'
- *     responses:
- *       200:
- *         description: Prediction updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: prediction updated successfully
- *                 data:
- *                   $ref: '#/components/schemas/Prediction'
- *       404:
- *         description: Prediction not found
- *       500:
- *         description: Internal server error
- */
-router.put("/:id", updatePrediction);
+// /**
+//  * @swagger
+//  * /api/predictions/{id}:
+//  *   put:
+//  *     summary: Update an existing prediction
+//  *     tags: [Predictions]
+//  *     parameters:
+//  *       - in: path
+//  *         name: id
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: Prediction ID
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             $ref: '#/components/schemas/Prediction'
+//  *     responses:
+//  *       200:
+//  *         description: Prediction updated successfully
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 success:
+//  *                   type: boolean
+//  *                   example: true
+//  *                 message:
+//  *                   type: string
+//  *                   example: prediction updated successfully
+//  *                 data:
+//  *                   $ref: '#/components/schemas/Prediction'
+//  *       404:
+//  *         description: Prediction not found
+//  *       500:
+//  *         description: Internal server error
+//  */
+// router.put("/:id", updatePrediction);
 
 /**
  * @swagger

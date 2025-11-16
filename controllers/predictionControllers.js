@@ -44,7 +44,7 @@ export const getOdds = async (req, res) => {
         data: odds,
       });
     } else {
-      // get odds[] based on a particular fixture
+      // get odds[] based on a particular fixture, mainly for admin page
       const odds = await fetchOdds({ fixture_id });
     }
 

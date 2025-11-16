@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  createPrediction,
+  createPredictions,
   deletePrediction,
 } from "../controllers/predictionControllers.js";
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -87,7 +87,7 @@ const router = express.Router();
  *       500:
  *         description: Server error or prediction creation failed
  */
-router.post("/", authMiddleware, createPrediction);
+router.post("/", authMiddleware, createPredictions);
 
 // /**
 //  * @swagger

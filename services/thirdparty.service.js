@@ -66,8 +66,19 @@ async function fetchOdds(args) {
 
   try {
     const res = await api_client.get("/odds", { params });
-    await setCached("odds", res.data, params);
-    return res.data;
+
+    // auto replace fixture_id in odds data with actual useful fixture info like teams, league ..
+    const odds = res.data.response;
+    await Promise.all(
+      odds.map(async (odd) => {
+        const fixture_details = await fetchFixtures(odd.fixture.id);
+        odd.fixture = fixture_details.response;
+      })
+    );
+    console.log("refined odds with fixtures:", odds);
+
+    await setCached("odds", odds, params);
+    return odds;
   } catch (error) {
     if (error.response) console.log("FetchOddsError1:", error.response.data);
     if (error.request) console.log("FetchOddsError2:", error.request);

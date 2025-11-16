@@ -1,6 +1,6 @@
 import mongoose, { Types } from "mongoose";
 
-const PredictionSchema = new mongoose.Schema(
+const OddSchema = new mongoose.Schema(
   {
     league: {
       id: Number,
@@ -38,19 +38,37 @@ const PredictionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export const Prediction = mongoose.model("Prediction", PredictionSchema);
+export const Odds = mongoose.model("Odds", OddSchema);
 
 const adminPredictionSchema = new mongoose.Schema(
   {
     user_id: { type: mongoose.Types.ObjectId, ref: "User", required: true },
-    fixture_id: { type: mongoose.Types.ObjectId, ref: "Match" },
-    leagueId: { type: String },
-    selections: {
-      free_tips: String,
-      banker: String,
-      free_2_odds: String,
-      supersingle: String,
+    // fixture_id: { type: mongoose.Types.ObjectId, ref: "Match" },
+    fixture: {
+      sport_type: { type: String, enum: ["football", "basketball", "tennis"] },
+      league: { type: String },
+      home_team: { type: String },
+      away_team: { type: String },
+      match_date: Date,
+      venue: { type: String },
+      status: { type: String, enum: ["upcoming", "live", "finished"] },
+      home_score: { type: Number, default: 0 },
+      away_score: { type: Number, default: 0 },
     },
+    leagueId: { type: String },
+    bets: [
+      {
+        id: Number,
+        name: String,
+        values: [
+          {
+            value: mongoose.Schema.Types.Mixed,
+            odd: String,
+            percentage: String, //dynamically calculated
+          },
+        ],
+      },
+    ],
   },
   { timestamps: true }
 );

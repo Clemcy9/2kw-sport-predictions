@@ -20,18 +20,35 @@ export const getOdds = async (req, res) => {
       // fetch odds based on type and for a particular day
       const today = new Date().toISOString().split("T")[0];
       const odds = await fetchOdds({ bet, today });
+      // can spread present odds with admin created odds odds.bets = [...adminodds]
     } else {
       // get odds for a particular fixture
       const odds = await fetchOdds({ fixture_id });
     }
 
     // auto replace fixture_id in odds data with actual useful fixture info like teams, league ..
-    fixture_details = await fetchFixtures(fixture_id);
-    odds.response.fixture = fixture_details.response;
+    // implemented on fetchodds
+    // const fixture_details = await fetchFixtures(fixture_id);
+    // odds.response.fixture = fixture_details.response;
 
     res.status(200).json({ message: "successful", data: odds });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// create predictions
+export const createPredictions = async (req, res) => {
+  const payload = req.body.params;
+  if (!payload.bet)
+    return res.status(404).json({ msg: "pls input values for bet" });
+
+  // create predictions
+  try {
+    const prediction = await AdminPrediction.create(payload);
+    res.status(201).json({ message: "created", data: prediction });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 

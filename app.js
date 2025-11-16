@@ -1,12 +1,14 @@
 import swaggerSpec from "./docs/swagger.js";
 import swaggerUi from "swagger-ui-express";
 import express from "express";
+import cors from "cors";
 import blogRoutes from "./routes/blogsRoutes.js";
 import adminPredictionRoutes from "./routes/predictionsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import footballRoutes from "./routes/footballRoutes.js";
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extends: true }));
 

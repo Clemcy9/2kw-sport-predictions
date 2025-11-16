@@ -10,7 +10,7 @@ import {
 export const getOdds = async (req, res) => {
   // req must have just prediction id (third party) from which we will create our adminPredictions from
   const { fixture_id, bet } = req.body;
-  if (!fixture_id && !bet)
+  if (!fixture_id || !bet)
     return res
       .status(400)
       .json({ message: "fixture id or odds type required" });
@@ -47,6 +47,39 @@ export const createPredictions = async (req, res) => {
   try {
     const prediction = await AdminPrediction.create(payload);
     res.status(201).json({ message: "created", data: prediction });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get all predictions :admin only
+export const getAllPredictions = async (req, res) => {
+  const user = req.body.user; //gotten from authMiddleware
+
+  try {
+    // get all predictions created by a particular admin
+    const predictions = await AdminPrediction.find({ user_id: user.id }).select(
+      "-timestamps -"
+    );
+    res.status(200).json({ message: "successful", data: predictions });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get a particular prediction :admin only
+export const getPrediction = async (req, res) => {
+  const user = req.body.user; //gotten from authMiddleware
+  const prediction_id = req.body.params?.prediction_id;
+
+  if (!prediction_id)
+    return res.status(400).json({ message: "prediction_id is required" });
+  try {
+    // get a particular predictions created by a particular admin
+    const prediction = await AdminPrediction.find({ user_id: user.id }).select(
+      "-timestamps -"
+    );
+    res.status(200).json({ message: "successful", data: prediction });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

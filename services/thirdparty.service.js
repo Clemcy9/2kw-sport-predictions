@@ -2,6 +2,7 @@ import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
 import { getCached, setCached } from "./cache.service.js";
+import AdminPrediction from "../models/predictionsModel.js";
 const { RAPIDSPORT_API_KEY, RAPIDSPORT_BASE_URL, RAPIDSPORT_API_HOST } =
   process.env;
 
@@ -58,8 +59,9 @@ async function fetchPredictions(matchId) {
 }
 
 async function fetchOdds(args) {
-  // const params = { date, fixture_id };
+  // const params = { date, fixture_id, bet };
   const params = { ...args };
+
   const cached = await getCached("odds", params);
 
   if (cached) return cached;

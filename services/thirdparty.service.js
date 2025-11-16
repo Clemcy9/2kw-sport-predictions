@@ -57,6 +57,24 @@ async function fetchPredictions(matchId) {
   }
 }
 
+async function fetchOdds(args) {
+  // const params = { date, fixture_id };
+  const params = { ...args };
+  const cached = await getCached("odds", params);
+
+  if (cached) return cached;
+
+  try {
+    const res = await api_client.get("/odds", { params });
+    await setCached("odds", res.data, params);
+    return res.data;
+  } catch (error) {
+    if (error.response) console.log("FetchOddsError1:", error.response.data);
+    if (error.request) console.log("FetchOddsError2:", error.request);
+    else console.log("FetchOddsError3:", error.message);
+  }
+}
+
 async function fetchLiveScore() {
   const cached = await getCached("predictions");
 
@@ -94,4 +112,10 @@ async function fetchStandings(leagueId, season) {
   }
 }
 
-export { fetchFixtures, fetchLiveScore, fetchPredictions, fetchStandings };
+export {
+  fetchFixtures,
+  fetchOdds,
+  fetchLiveScore,
+  fetchPredictions,
+  fetchStandings,
+};

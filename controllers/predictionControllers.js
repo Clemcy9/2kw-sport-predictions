@@ -1,43 +1,37 @@
 import express from "express";
 import AdminPrediction from "../models/predictionsModel.js";
-import { fetchPredictions } from "../services/thirdparty.service.js";
+import {
+  fetchFixtures,
+  fetchOdds,
+  fetchPredictions,
+} from "../services/thirdparty.service.js";
 
-// create AdminPrediction
-export const createPrediction = async (req, res) => {
+// get odds :admin via fixture_id, users via odds_type(called bet)
+export const getOdds = async (req, res) => {
   // req must have just prediction id (third party) from which we will create our adminPredictions from
-  const { fixture_id, user, selections } = req.body;
-  if (!fixture_id)
-    return res.status(400).json({ message: "fixture id required" });
+  const { fixture_id, bet } = req.body;
+  if (!fixture_id && !bet)
+    return res
+      .status(400)
+      .json({ message: "fixture id or odds type required" });
 
-  // needless storing the third party predictions in db, can always make reference to it
-  // get third party predictions for the given fixture id
-  const external_predictions = await fetchPredictions(fixture_id);
-  // structure of external_predictions
-  // external_predictions:resposns = [
-  //   { predictions: {}, league: {}, teams: {}, comparison: {}, h2h: {} },
-  // ];
-
-  // structure of selections
-  // selections = {
-  //   free_tips: "1 or home",
-  //   banker: "x or draw",
-  //   super_single: "2 or away",
-  //   free_2_odds: "ov 1.5",
-  // };
   try {
-    const newPrediction = await AdminPrediction.create({
-      ...req.body,
-      user_id: user._id,
-    });
-    res.status(200).json({
-      message: "AdminPrediction added successfully",
-      data: newPrediction,
-    });
+    if (bet) {
+      // fetch odds based on type and for a particular day
+      const today = new Date().toISOString().split("T")[0];
+      const odds = await fetchOdds({ bet, today });
+    } else {
+      // get odds for a particular fixture
+      const odds = await fetchOdds({ fixture_id });
+    }
+
+    // auto replace fixture_id in odds data with actual useful fixture info like teams, league ..
+    fixture_details = await fetchFixtures(fixture_id);
+    odds.response.fixture = fixture_details.response;
+
+    res.status(200).json({ message: "successful", data: odds });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: `${error.message} AdminPrediction failed`,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

@@ -27,6 +27,7 @@ async function getCached(endpoint, params) {
 }
 
 async function setCached(endpoint, value, params = {}) {
+  const TTL = parseInt(process.env.CACHE_TTL_SECONDS);
   const key = keyfor(endpoint, params);
   await redisClient.setEx(key, TTL, JSON.stringify(value));
 }

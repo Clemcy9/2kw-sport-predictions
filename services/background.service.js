@@ -1,6 +1,7 @@
 import {
   fetchFixtures,
   fetchLiveScore,
+  fetchOdds,
   fetchPredictions,
   fetchStandings,
 } from "./thirdparty.service.js";
@@ -25,9 +26,9 @@ function startBackgroundTask() {
       // await setCached("livescore", livescore);
       console.log("backgroud task ran2");
 
-      // all predictions via array of league ids
+      // all odds via array of league ids
       league_ids.map((league_id) => {
-        fetchPredictions(league_id);
+        fetchOdds({ league_id, today });
       });
 
       console.log("backgroud task ran3");

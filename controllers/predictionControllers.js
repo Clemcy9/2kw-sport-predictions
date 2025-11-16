@@ -9,27 +9,44 @@ import {
 // get odds :admin via fixture_id, users via odds_type(called bet)
 export const getOdds = async (req, res) => {
   // req must have just prediction id (third party) from which we will create our adminPredictions from
-  const { fixture_id, bet } = req.body;
-  if (!fixture_id || !bet)
+  const { fixture_id, betId } = req.body;
+  if (!fixture_id || !betId)
     return res
       .status(400)
       .json({ message: "fixture id or odds type required" });
 
   try {
-    if (bet) {
-      // fetch odds based on type and for a particular day
+    if (betId) {
+      // fetch odds based on betId type and for a particular day
       const today = new Date().toISOString().split("T")[0];
+
+      // let {free_tips_id:100, sure_odds:200, banker:300, free_2_tips:400}
+      // a logic that checks for admin saved odds (adminPredictions)
+      if (req.body?.betId >= 100) {
+        const query = {
+          "bets.id": betId,
+          "fixture.match_date": {
+            $gte: new Date(`${today}T00:00:00.000Z`),
+            $lte: new Date(`${today}T23:59:59.999Z`),
+          },
+        };
+
+        const adminPredictions = await AdminPrediction.find(query);
+
+        return res.status(200).json({
+          message: "successful",
+          data: adminPredictions,
+        });
+      }
       const odds = await fetchOdds({ bet, today });
-      // can spread present odds with admin created odds odds.bets = [...adminodds]
+      return res.status(200).json({
+        message: "successful",
+        data: odds,
+      });
     } else {
-      // get odds for a particular fixture
+      // get odds[] based on a particular fixture
       const odds = await fetchOdds({ fixture_id });
     }
-
-    // auto replace fixture_id in odds data with actual useful fixture info like teams, league ..
-    // implemented on fetchodds
-    // const fixture_details = await fetchFixtures(fixture_id);
-    // odds.response.fixture = fixture_details.response;
 
     res.status(200).json({ message: "successful", data: odds });
   } catch (error) {
@@ -39,7 +56,7 @@ export const getOdds = async (req, res) => {
 
 // create predictions
 export const createPredictions = async (req, res) => {
-  const payload = req.body.params;
+  const payload = req.body;
   if (!payload.bet)
     return res.status(404).json({ msg: "pls input values for bet" });
 
@@ -70,7 +87,7 @@ export const getAllPredictions = async (req, res) => {
 // get a particular prediction :admin only
 export const getPrediction = async (req, res) => {
   const user = req.body.user; //gotten from authMiddleware
-  const prediction_id = req.body.params?.prediction_id;
+  const prediction_id = req.body?.prediction_id;
 
   if (!prediction_id)
     return res.status(400).json({ message: "prediction_id is required" });

@@ -2,44 +2,46 @@ import express from "express";
 import {
   createPredictions,
   deletePrediction,
+  getAllPredictions,
+  getPrediction,
+  updatePrediction,
+  getOdds,
 } from "../controllers/predictionControllers.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
 /**
  * @swagger
  * tags:
  *   name: Predictions
- *   description: prediction for matches
+ *   description: Admin prediction
  */
 
 /**
  * @swagger
  * components:
  *   schemas:
- *     Prediction:
+ *     AdminPrediction:
  *       type: object
  *       required:
- *         - match_id
- *         - user_id
- *         - predicted_winner
+ *         - bet
+ *         - fixture_id
  *       properties:
  *         id:
  *           type: string
- *           description: The auto-generated ID of the prediction
- *         match_id:
- *           type: string
- *           description: ID of the match the prediction belongs to
+ *         bet:
+ *           type: number
+ *         fixture_id:
+ *           type: number
  *         user_id:
  *           type: string
- *           description: ID of the user who made the prediction
- *         predicted_winner:
- *           type: string
- *           description: The predicted winner of the match
- *         confidence_level:
- *           type: number
- *           description: Confidence percentage (0–100)
- *           example: 85
+ *         bets:
+ *           type: array
+ *           items:
+ *             type: object
+ *         fixture:
+ *           type: object
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -47,167 +49,152 @@ const router = express.Router();
  *           type: string
  *           format: date-time
  *       example:
- *         id: "671612b7d3c53c6f246a8c12"
- *         match_id: "671611a4d3c53c6f246a8b90"
- *         user_id: "67160fa2d3c53c6f246a8a83"
- *         predicted_winner: "Lions FC"
- *         confidence_level: 90
- *         createdAt: "2025-10-21T10:30:00Z"
- *         updatedAt: "2025-10-21T10:45:00Z"
+ *         bet: 100
+ *         fixture_id: 223344
  */
+
+/**
+ * @swagger
+ * /api/predictions/odds:
+ *   get:
+ *     summary: Fetch betting odds for a fixture or odds type
+ *     description: >
+ *       - Admin: provide **fixture_id** to fetch odds for a specific fixture  
+ *       - Users: provide **betId** (e.g., free_tips_id, sure_odds) to fetch odds for the day  
+ *       If betId is >= 100, admin-saved predictions for today are returned.
+ *     tags: [Predictions]
+ *     parameters:
+ *       - in: query
+ *         name: fixture_id
+ *         schema:
+ *           type: number
+ *         required: false
+ *         description: Fixture ID (admin odds lookup)
+ *       - in: query
+ *         name: betId
+ *         schema:
+ *           type: number
+ *         required: false
+ *         description: Bet/odds category ID (user odds lookup)
+ *     responses:
+ *       200:
+ *         description: Odds or admin predictions returned successfully
+ *       400:
+ *         description: Missing fixture_id or betId
+ *       500:
+ *         description: Server error
+ */
+router.get("/odds", getOdds);
+
 
 /**
  * @swagger
  * /api/predictions:
  *   post:
- *     summary: Create a new prediction
+ *     summary: Create a new admin prediction
  *     tags: [Predictions]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Prediction'
+ *             type: object
+ *             properties:
+ *               bet:
+ *                 type: number
+ *               fixture_id:
+ *                 type: number
+ *             example:
+ *               bet: 100
+ *               fixture_id: 12345
  *     responses:
- *       200:
+ *       201:
  *         description: Prediction created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: prediction added successfully
- *                 data:
- *                   $ref: '#/components/schemas/Prediction'
+ *       400:
+ *         description: Missing bet or data
  *       500:
- *         description: Server error or prediction creation failed
+ *         description: Server error
  */
 router.post("/", authMiddleware, createPredictions);
 
-// /**
-//  * @swagger
-//  * /api/predictions:
-//  *   get:
-//  *     summary: Retrieve all predictions (optionally filtered)
-//  *     tags: [Predictions]
-//  *     parameters:
-//  *       - in: query
-//  *         name: matchId
-//  *         schema:
-//  *           type: string
-//  *         required: false
-//  *         description: Filter predictions by match ID
-//  *       - in: query
-//  *         name: date
-//  *         schema:
-//  *           type: string
-//  *           format: date
-//  *         required: false
-//  *         description: Filter predictions created on or after this date
-//  *     responses:
-//  *       200:
-//  *         description: Successfully retrieved predictions
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 success:
-//  *                   type: boolean
-//  *                   example: true
-//  *                 data:
-//  *                   type: array
-//  *                   items:
-//  *                     $ref: '#/components/schemas/Prediction'
-//  *       404:
-//  *         description: No predictions found
-//  *       500:
-//  *         description: Internal server error
-//  */
-// router.get("/", getPrediction);
+/**
+ * @swagger
+ * /api/predictions:
+ *   get:
+ *     summary: Get all predictions created by the authenticated admin
+ *     tags: [Predictions]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of admin predictions
+ *       500:
+ *         description: Server error
+ */
+router.get("/", authMiddleware, getAllPredictions);
 
-// /**
-//  * @swagger
-//  * /api/predictions/{id}:
-//  *   get:
-//  *     summary: Retrieve a single prediction by ID
-//  *     tags: [Predictions]
-//  *     parameters:
-//  *       - in: path
-//  *         name: id
-//  *         required: true
-//  *         schema:
-//  *           type: string
-//  *         description: Prediction ID
-//  *     responses:
-//  *       200:
-//  *         description: Prediction retrieved successfully
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 success:
-//  *                   type: boolean
-//  *                   example: true
-//  *                 message:
-//  *                   type: string
-//  *                   example: prediction gotten successfully
-//  *                 data:
-//  *                   $ref: '#/components/schemas/Prediction'
-//  *       404:
-//  *         description: Prediction not found
-//  *       500:
-//  *         description: Internal server error
-//  */
-// router.get("/:id", getPedictionId);
+/**
+ * @swagger
+ * /api/predictions/single:
+ *   post:
+ *     summary: Get a specific prediction by ID
+ *     tags: [Predictions]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               prediction_id:
+ *                 type: string
+ *             example:
+ *               prediction_id: "671612b7d3c53c6f246a8c12"
+ *     responses:
+ *       200:
+ *         description: Prediction retrieved successfully
+ *       400:
+ *         description: prediction_id missing
+ *       500:
+ *         description: Server error
+ */
+router.post("/single", authMiddleware, getPrediction);
 
-// /**
-//  * @swagger
-//  * /api/predictions/{id}:
-//  *   put:
-//  *     summary: Update an existing prediction
-//  *     tags: [Predictions]
-//  *     parameters:
-//  *       - in: path
-//  *         name: id
-//  *         required: true
-//  *         schema:
-//  *           type: string
-//  *         description: Prediction ID
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             $ref: '#/components/schemas/Prediction'
-//  *     responses:
-//  *       200:
-//  *         description: Prediction updated successfully
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 success:
-//  *                   type: boolean
-//  *                   example: true
-//  *                 message:
-//  *                   type: string
-//  *                   example: prediction updated successfully
-//  *                 data:
-//  *                   $ref: '#/components/schemas/Prediction'
-//  *       404:
-//  *         description: Prediction not found
-//  *       500:
-//  *         description: Internal server error
-//  */
-// router.put("/:id", updatePrediction);
+
+
+/**
+ * @swagger
+ * /api/predictions/{id}:
+ *   put:
+ *     summary: Update an existing prediction
+ *     tags: [Predictions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AdminPrediction'
+ *     responses:
+ *       200:
+ *         description: Prediction updated successfully
+ *       404:
+ *         description: Prediction not found
+ *       500:
+ *         description: Server error
+ */
+router.put("/:id", authMiddleware, updatePrediction);
+
+
 
 /**
  * @swagger
@@ -221,26 +208,14 @@ router.post("/", authMiddleware, createPredictions);
  *         required: true
  *         schema:
  *           type: string
- *         description: Prediction ID
  *     responses:
  *       200:
  *         description: Prediction deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: prediction deleted successfully
  *       404:
  *         description: Prediction not found
  *       500:
- *         description: Internal server error
+ *         description: Server error
  */
-router.delete("/:id", deletePrediction);
+router.delete("/:id", authMiddleware, deletePrediction);
 
 export default router;

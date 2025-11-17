@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { createToken } from "../middleware/authMiddleware.js";
 import User, { Verification } from "../models/userModel.js";
 import { sendVerificationMail } from "../utils/sendVerificationMail.js";

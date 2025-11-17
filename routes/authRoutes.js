@@ -35,8 +35,8 @@ const router = express.Router();
  *           schema:
  *             example:
  *               name: "Aboy CM"
- *               email: "aboy_cm@gmail.com"
- *               password: "no guilt in life"
+ *               email: "clement@gmail.com"
+ *               password: "password123"
  *     responses:
  *       201:
  *         description: User registered successfully

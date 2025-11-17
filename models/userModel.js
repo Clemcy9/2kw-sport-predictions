@@ -35,9 +35,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const User = mongoose.model("User", userSchema);
-export default User;
-
 // create a compound unique index
 userSchema.index({ first_name: 1, last_name: 1 }, { unique: true });
 
@@ -52,6 +49,9 @@ userSchema.pre("save", async function (next) {
   this.is_new = true; //temp field used to check if user is just created, it exist only in memory not in db
   next();
 });
+
+const User = mongoose.model("User", userSchema);
+export default User;
 
 const verificationSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },

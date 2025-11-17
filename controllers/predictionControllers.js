@@ -54,7 +54,7 @@ export const getOdds = async (req, res) => {
   }
 };
 
-// create predictions
+// create predictions: auth required
 export const createPredictions = async (req, res) => {
   const payload = req.body;
   if (!payload.bet)

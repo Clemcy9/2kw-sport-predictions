@@ -6,7 +6,7 @@ import AdminPrediction from "../models/predictionsModel.js";
 const { RAPIDSPORT_API_KEY, RAPIDSPORT_BASE_URL, RAPIDSPORT_API_HOST } =
   process.env;
 
-console.log("base url:", RAPIDSPORT_BASE_URL);
+// console.log("base url:", RAPIDSPORT_BASE_URL);
 
 const api_client = axios.create({
   baseURL: RAPIDSPORT_BASE_URL,
@@ -20,14 +20,9 @@ const api_client = axios.create({
 });
 
 async function fetchFixtures(args) {
-  console.log("base url:", RAPIDSPORT_BASE_URL);
-
   const params = { ...args };
 
-  // if (date) params.date = date;
-  // if (id) params.id = id; // API requires "id" for single fixture lookup
-
-  // check cache using both date and fixture_id
+  // check cache using both date and fixture (fixture_id)
   const cached = await getCached("fixtures", params);
   if (cached) return cached;
 
@@ -77,23 +72,36 @@ async function fetchOdds(args) {
   try {
     const res = await api_client.get("/odds", { params });
 
-    // auto replace fixture_id in odds data with actual useful fixture info like teams, league ..
     const odds = await res.data.response;
     // console.log("response fetch:", odds);
-    // needs to be debugged
+
+    // replacing fixture id, with actual fixture details by fetching fixture with each unique id
     await Promise.all(
       odds.map(async (odd) => {
         const fixture_details = await fetchFixtures({ id: odd.fixture.id });
         odd.fixture = fixture_details.response;
-        console.log("old fixture:", odd.fixture);
+        // console.log("old fixture:", odd.fixture);
       })
     );
 
-    // odds.fixture = await fetchFixtures({ id: await odds.fixture.id });
-    // console.log("refined odds with fixtures:", odds);
+    // scraping out unneccessary data (cleaning dataset)
+    const cleaned_odds = odds.map((odd) => {
+      const fx = odd.fixture[0]; // the actual fixture object
+      return {
+        fixture: {
+          fixture: fx.fixture,
+          league: fx.league,
+          teams: fx.teams,
+          goals: fx.goals,
+          status: fx.fixture.status, // nested
+        },
+        bets: odd.bookmakers?.[0]?.bets ?? [],
+      };
+    });
+    // console.log("cleaned odds:", cleaned_odds);
 
-    await setCached("odds", odds, params);
-    return odds;
+    await setCached("odds", cleaned_odds, params);
+    return cleaned_odds;
   } catch (error) {
     if (error.response) console.log("FetchOddsError1:", error.response.data);
     if (error.request) console.log("FetchOddsError2:", error.request);

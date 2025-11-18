@@ -26,13 +26,13 @@ const router = express.Router();
  *       type: object
  *       required:
  *         - bet
- *         - fixture_id
+ *         - fixture
  *       properties:
  *         id:
  *           type: string
  *         bet:
  *           type: number
- *         fixture_id:
+ *         fixture:
  *           type: number
  *         user_id:
  *           type: string
@@ -40,8 +40,6 @@ const router = express.Router();
  *           type: array
  *           items:
  *             type: object
- *         fixture:
- *           type: object
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -50,7 +48,7 @@ const router = express.Router();
  *           format: date-time
  *       example:
  *         bet: 100
- *         fixture_id: 223344
+ *         fixture: 223344
  */
 
 /**
@@ -59,13 +57,13 @@ const router = express.Router();
  *   get:
  *     summary: Fetch betting odds for a fixture or odds type
  *     description: >
- *       - Admin: provide **fixture_id** to fetch odds for a specific fixture
+ *       - Admin: provide **fixture** to fetch odds for a specific fixture
  *       - Users: provide **betId** (e.g., free_tips_id, sure_odds) to fetch odds for the day
  *       If betId is >= 100, admin-saved predictions for today are returned.
  *     tags: [Predictions]
  *     parameters:
  *       - in: query
- *         name: fixture_id
+ *         name: fixture
  *         schema:
  *           type: number
  *         required: false
@@ -80,7 +78,7 @@ const router = express.Router();
  *       200:
  *         description: Odds or admin predictions returned successfully
  *       400:
- *         description: Missing fixture_id or betId
+ *         description: Missing fixture or betId
  *       500:
  *         description: Server error
  */
@@ -103,11 +101,11 @@ router.get("/odds", getOdds);
  *             properties:
  *               bet:
  *                 type: number
- *               fixture_id:
+ *               fixture:
  *                 type: number
  *             example:
  *               bet: 100
- *               fixture_id: 12345
+ *               fixture: 12345
  *     responses:
  *       201:
  *         description: Prediction created successfully

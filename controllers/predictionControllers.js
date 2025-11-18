@@ -6,13 +6,15 @@ import {
   fetchPredictions,
 } from "../services/thirdparty.service.js";
 
-// get odds :admin via fixture_id, users via odds_type(called bet)
+// get odds :admin via fixture, users via odds_type(called bet)
 export const getOdds = async (req, res) => {
   // req must have just prediction id (third party) from which we will create our adminPredictions from
   console.log("getodds> body:", req.query);
-  const fixture_id = req.query?.fixture_id;
+  const fixture = req.query?.fixture;
   const bet = req.query?.bet;
-  if (!fixture_id && !bet)
+  const date = new Date().toISOString().split("T")[0];
+
+  if (!fixture && !bet)
     return res
       .status(400)
       .json({ message: "fixture id or odds type required" });
@@ -20,7 +22,6 @@ export const getOdds = async (req, res) => {
   try {
     if (bet) {
       // fetch odds based on bet type and for a particular day
-      const date = new Date().toISOString().split("T")[0];
 
       // let {free_tips_id:100, sure_odds:200, banker:300, free_2_tips:400}
       // a logic that checks for admin saved odds (adminPredictions)
@@ -47,7 +48,7 @@ export const getOdds = async (req, res) => {
       });
     } else {
       // get odds[] based on a particular fixture, mainly for admin page
-      const odds = await fetchOdds({ fixture_id });
+      const odds = await fetchOdds({ fixture });
       res.status(200).json({ message: "successful", data: odds });
     }
   } catch (error) {

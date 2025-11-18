@@ -19,18 +19,23 @@ const api_client = axios.create({
   timeout: 10000,
 });
 
-async function fetchFixtures(date) {
+async function fetchFixtures(args) {
   console.log("base url:", RAPIDSPORT_BASE_URL);
-  const params = {};
-  if (date) params.date = date;
 
-  // check cache
+  const params = { ...args };
+
+  // if (date) params.date = date;
+  // if (id) params.id = id; // API requires "id" for single fixture lookup
+
+  // check cache using both date and fixture_id
   const cached = await getCached("fixtures", params);
   if (cached) return cached;
 
   try {
-    const res = await api_client.get("/fixtures", params);
+    const res = await api_client.get("/fixtures", { params });
+
     await setCached("fixtures", res.data, params);
+
     return res.data;
   } catch (error) {
     if (error.response)
@@ -60,9 +65,12 @@ async function fetchPredictions(matchId) {
 
 async function fetchOdds(args) {
   // const params = { date, fixture_id, bet };
-  const params = { ...args };
+  console.log("in fetchodds");
+  const params = { ...args, bookmaker: 11 };
+  // console.log("fetchodds params:", params);
 
   const cached = await getCached("odds", params);
+  // console.log("response from cache:", cached);
 
   if (cached) return cached;
 
@@ -70,14 +78,19 @@ async function fetchOdds(args) {
     const res = await api_client.get("/odds", { params });
 
     // auto replace fixture_id in odds data with actual useful fixture info like teams, league ..
-    const odds = res.data.response;
+    const odds = await res.data.response;
+    // console.log("response fetch:", odds);
+    // needs to be debugged
     await Promise.all(
       odds.map(async (odd) => {
-        const fixture_details = await fetchFixtures(odd.fixture.id);
+        const fixture_details = await fetchFixtures({ id: odd.fixture.id });
         odd.fixture = fixture_details.response;
+        console.log("old fixture:", odd.fixture);
       })
     );
-    console.log("refined odds with fixtures:", odds);
+
+    // odds.fixture = await fetchFixtures({ id: await odds.fixture.id });
+    // console.log("refined odds with fixtures:", odds);
 
     await setCached("odds", odds, params);
     return odds;

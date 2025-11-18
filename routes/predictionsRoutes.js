@@ -15,7 +15,7 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Predictions
- *   description: Admin prediction
+ *   description: serves odds (3rd party) to both admin and user, and also predictioncs crud
  */
 
 /**
@@ -55,12 +55,12 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/predictions/odds:
+ * /api/v1/admin/predictions/odds:
  *   get:
  *     summary: Fetch betting odds for a fixture or odds type
  *     description: >
- *       - Admin: provide **fixture_id** to fetch odds for a specific fixture  
- *       - Users: provide **betId** (e.g., free_tips_id, sure_odds) to fetch odds for the day  
+ *       - Admin: provide **fixture_id** to fetch odds for a specific fixture
+ *       - Users: provide **betId** (e.g., free_tips_id, sure_odds) to fetch odds for the day
  *       If betId is >= 100, admin-saved predictions for today are returned.
  *     tags: [Predictions]
  *     parameters:
@@ -71,7 +71,7 @@ const router = express.Router();
  *         required: false
  *         description: Fixture ID (admin odds lookup)
  *       - in: query
- *         name: betId
+ *         name: bet
  *         schema:
  *           type: number
  *         required: false
@@ -86,10 +86,9 @@ const router = express.Router();
  */
 router.get("/odds", getOdds);
 
-
 /**
  * @swagger
- * /api/predictions:
+ * /api/v1/admin/predictions:
  *   post:
  *     summary: Create a new admin prediction
  *     tags: [Predictions]
@@ -121,7 +120,7 @@ router.post("/", authMiddleware, createPredictions);
 
 /**
  * @swagger
- * /api/predictions:
+ * /api/v1/admin/predictions:
  *   get:
  *     summary: Get all predictions created by the authenticated admin
  *     tags: [Predictions]
@@ -137,7 +136,7 @@ router.get("/", authMiddleware, getAllPredictions);
 
 /**
  * @swagger
- * /api/predictions/single:
+ * /api/v1/admin/predictions/single:
  *   post:
  *     summary: Get a specific prediction by ID
  *     tags: [Predictions]
@@ -164,11 +163,9 @@ router.get("/", authMiddleware, getAllPredictions);
  */
 router.post("/single", authMiddleware, getPrediction);
 
-
-
 /**
  * @swagger
- * /api/predictions/{id}:
+ * /api/v1/admin/predictions/{id}:
  *   put:
  *     summary: Update an existing prediction
  *     tags: [Predictions]
@@ -194,11 +191,9 @@ router.post("/single", authMiddleware, getPrediction);
  */
 router.put("/:id", authMiddleware, updatePrediction);
 
-
-
 /**
  * @swagger
- * /api/predictions/{id}:
+ * /api/v1/admin/predictions/{id}:
  *   delete:
  *     summary: Delete a prediction
  *     tags: [Predictions]

@@ -9,25 +9,27 @@ import {
 // get odds :admin via fixture_id, users via odds_type(called bet)
 export const getOdds = async (req, res) => {
   // req must have just prediction id (third party) from which we will create our adminPredictions from
-  const { fixture_id, betId } = req.body;
-  if (!fixture_id || !betId)
+  console.log("getodds> body:", req.query);
+  const fixture_id = req.query?.fixture_id;
+  const bet = req.query?.bet;
+  if (!fixture_id && !bet)
     return res
       .status(400)
       .json({ message: "fixture id or odds type required" });
 
   try {
-    if (betId) {
-      // fetch odds based on betId type and for a particular day
-      const today = new Date().toISOString().split("T")[0];
+    if (bet) {
+      // fetch odds based on bet type and for a particular day
+      const date = new Date().toISOString().split("T")[0];
 
       // let {free_tips_id:100, sure_odds:200, banker:300, free_2_tips:400}
       // a logic that checks for admin saved odds (adminPredictions)
-      if (req.body?.betId >= 100) {
+      if (parseInt(bet) >= 100) {
         const query = {
-          "bets.id": betId,
+          "bets.id": bet,
           "fixture.match_date": {
-            $gte: new Date(`${today}T00:00:00.000Z`),
-            $lte: new Date(`${today}T23:59:59.999Z`),
+            $gte: new Date(`${date}T00:00:00.000Z`),
+            $lte: new Date(`${date}T23:59:59.999Z`),
           },
         };
 
@@ -38,7 +40,7 @@ export const getOdds = async (req, res) => {
           data: adminPredictions,
         });
       }
-      const odds = await fetchOdds({ bet, today });
+      const odds = await fetchOdds({ bet, date });
       return res.status(200).json({
         message: "successful",
         data: odds,
@@ -46,10 +48,10 @@ export const getOdds = async (req, res) => {
     } else {
       // get odds[] based on a particular fixture, mainly for admin page
       const odds = await fetchOdds({ fixture_id });
+      res.status(200).json({ message: "successful", data: odds });
     }
-
-    res.status(200).json({ message: "successful", data: odds });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

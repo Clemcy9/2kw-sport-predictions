@@ -24,13 +24,7 @@ const options = {
     ],
   },
   // Path to the API docs
-  apis: [
-    "./routes/adminRoutes.js",
-    "./routes/authRoutes.js",
-    "./routes/blogsRoutes.js",
-    "./routes/matchRoutes.js",
-    "./routes/predictionRoutes.js",
-  ], // files containing annotations for the OpenAPI Specification
+  apis: ["./routes/*.js"], // files containing annotations for the OpenAPI Specification
 };
 
 const swaggerSpec = swaggerJSDoc(options);

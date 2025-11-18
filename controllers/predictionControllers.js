@@ -59,13 +59,16 @@ export const getOdds = async (req, res) => {
 
 // create predictions: auth required
 export const createPredictions = async (req, res) => {
+  // payload should contain the fixture_id, then a dictionary of {super_single:{bets.id, chosen value}}
   const payload = req.body;
+  const user_id = req.user.id;
+  console.log("user:", user_id);
   if (!payload.bet)
     return res.status(404).json({ msg: "pls input values for bet" });
 
   // create predictions
   try {
-    const prediction = await AdminPrediction.create(payload);
+    const prediction = await AdminPrediction.create({ ...payload, user_id });
     res.status(201).json({ message: "created", data: prediction });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -74,12 +77,12 @@ export const createPredictions = async (req, res) => {
 
 // get all predictions :admin only
 export const getAllPredictions = async (req, res) => {
-  const user = req.body.user; //gotten from authMiddleware
+  const user_id = req.user.id; //gotten from authMiddleware
 
   try {
     // get all predictions created by a particular admin
-    const predictions = await AdminPrediction.find({ user_id: user.id }).select(
-      "-timestamps -"
+    const predictions = await AdminPrediction.find({ user_id }).select(
+      "-timestamps"
     );
     res.status(200).json({ message: "successful", data: predictions });
   } catch (error) {

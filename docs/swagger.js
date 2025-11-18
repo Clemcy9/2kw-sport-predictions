@@ -22,7 +22,22 @@ const options = {
         description: "Production",
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
+
   // Path to the API docs
   apis: ["./routes/*.js"], // files containing annotations for the OpenAPI Specification
 };

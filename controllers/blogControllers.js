@@ -11,9 +11,7 @@ export const createBlog = async (req, res) => {
       data: newBlog,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: `${error} blog post failed` });
+    res.status(500).json({ success: false, message: `${error} blog post failed` });
   }
 };
 

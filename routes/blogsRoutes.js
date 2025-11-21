@@ -6,6 +6,8 @@ import {
   updateBlog,
   deleteBlog,
 } from "../controllers/blogControllers.js";
+import authMiddleware from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
 /**
@@ -87,7 +89,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/", createBlog);
+router.post("/", authMiddleware, createBlog);
 
 
 /**
@@ -114,7 +116,7 @@ router.post("/", createBlog);
  *       500:
  *         description: Server error
  */
-router.get("/", getBlogs);
+router.get("/", authMiddleware, getBlogs);
 
 
 /**
@@ -148,7 +150,7 @@ router.get("/", getBlogs);
  *       500:
  *         description: Server error
  */
-router.get("/:id", getBlogId);
+router.get("/:id", authMiddleware, getBlogId);
 
 /**
  * @swagger
@@ -190,7 +192,7 @@ router.get("/:id", getBlogId);
  *       500:
  *         description: Server error
  */
-router.put("/:id", updateBlog);
+router.put("/:id", authMiddleware, updateBlog);
 
 
 /**
@@ -225,7 +227,7 @@ router.put("/:id", updateBlog);
  *       400:
  *         description: Bad request
  */
-router.delete("/:id", deleteBlog);
+router.delete("/:id", authMiddleware, deleteBlog);
 
 
 

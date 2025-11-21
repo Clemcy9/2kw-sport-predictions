@@ -37,6 +37,9 @@ const router = express.Router();
  *         content:
  *           type: string
  *           description: Content of the blog post
+ *         image: 
+ *           type: string
+ *           description: http://url
  *         user:
  *           type: string
  *           description: ID of the user who created the blog

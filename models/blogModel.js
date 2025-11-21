@@ -5,8 +5,8 @@ const blogSchema = mongoose.Schema(
   {
     user: [{ type: mongoose.Types.ObjectId, ref: "User" }],
     title: { type: String, required: true },
-    body: String,
-    image: String,
+    body: {type:String, required:true},
+    image: {type:String, required: true},
     views: { type: Number, default: 0 },
     status: {
       type: String,

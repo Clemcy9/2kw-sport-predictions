@@ -4,6 +4,13 @@ import Blog from "../models/blogModel.js";
 // create blog
 export const createBlog = async (req, res) => {
   try {
+    if( !req.user || !req.user.isAdmin){
+      return res.status(403).json({message: "unathorized only admin can perform this action"})
+    }
+    const {title, body, image} = req.body
+    if(!title || !body || !image){
+      return res.status(400).json("Please Fill In Those Fields")
+    }
     const newBlog = await Blog.create(req.body);
     res.status(201).json({
       success: true,
@@ -32,11 +39,17 @@ export const getBlogs = async (req, res) => {
 export const getBlogId = async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id).populate("user", "email");
-    if (!blog)
+    if (!blog){
       return res
         .status(404)
-        .json({ message: `${error.message} blog not found` });
-  } catch (error) {
+        .json({ message: `blog not found` });
+    }
+      return res.status(200).json({success: true, message: "Blog gotten successfully", data: blog})
+       
+  }
+ 
+   
+  catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -44,7 +57,10 @@ export const getBlogId = async (req, res) => {
 // update blog
 export const updateBlog = async (req, res) => {
   try {
-    const blog = await Blog.findByIdAndUpdate(req.params.id, req.body);
+    if(!req.user || !req.user.isAdmin) {
+      return res.status(403).json({message: "Unauthorized user, only admin can update blog"})
+    }
+    const blog = await Blog.findByIdAndUpdate(req.params.id, req.body, {new: true});
     if (!blog) return res.status(404).json({ message: "blog not found" });
     res.status(200).json({
       success: true,
@@ -59,9 +75,13 @@ export const updateBlog = async (req, res) => {
 // delete blog post
 export const deleteBlog = async (req, res) => {
   try {
+    if(!req.user || !req.user.isAdmin) {
+      return res.status(403).json({message: "Unauthorized user"})
+    }
+
     const blog = await Blog.findByIdAndDelete(req.params.id);
     if (!blog) return res.status(404).json({ message: "blog not found" });
-    res.status(500).json({
+    res.status(200).json({
       success: true,
       message: "Blog deleted successfully",
       data: blog,

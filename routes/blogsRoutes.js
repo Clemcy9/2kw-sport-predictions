@@ -119,7 +119,7 @@ router.post("/", authMiddleware, createBlog);
  *       500:
  *         description: Server error
  */
-router.get("/", authMiddleware, getBlogs);
+router.get("/", getBlogs);
 
 
 /**
@@ -153,7 +153,7 @@ router.get("/", authMiddleware, getBlogs);
  *       500:
  *         description: Server error
  */
-router.get("/:id", authMiddleware, getBlogId);
+router.get("/:id", getBlogId);
 
 /**
  * @swagger

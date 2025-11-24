@@ -26,7 +26,7 @@ const router = express.Router();
  *       required:
  *         - title
  *         - content
- *         - user
+ *         - image
  *       properties:
  *         id:
  *           type: string
@@ -37,7 +37,7 @@ const router = express.Router();
  *         content:
  *           type: string
  *           description: Content of the blog post
- *         image: 
+ *         image:
  *           type: string
  *           description: http://url
  *         user:
@@ -53,17 +53,12 @@ const router = express.Router();
  *         id: 662c10d2f8d2b41d8c1a7e99
  *         title: "How to Build a REST API with Express"
  *         content: "This tutorial explains how to build a REST API using Node.js and Express."
- *         user: "661a34b3f8d2b41d8c1a7b25"
- *         createdAt: "2025-10-21T12:00:00Z"
- *         updatedAt: "2025-10-21T12:30:00Z"
+ *
  */
-
-
-
 
 /**
  * @swagger
- * /api/blogs:
+ * /api/v1/blogs:
  *   post:
  *     summary: Create a new blog post
  *     tags: [Blogs]
@@ -94,10 +89,9 @@ const router = express.Router();
  */
 router.post("/", authMiddleware, createBlog);
 
-
 /**
  * @swagger
- * /api/blogs:
+ * /api/v1/blogs:
  *   get:
  *     summary: Get all blog posts
  *     tags: [Blogs]
@@ -121,10 +115,9 @@ router.post("/", authMiddleware, createBlog);
  */
 router.get("/", getBlogs);
 
-
 /**
  * @swagger
- * /api/blogs/{id}:
+ * /api/v1/blogs/{id}:
  *   get:
  *     summary: Get a single blog post by ID
  *     tags: [Blogs]
@@ -157,7 +150,7 @@ router.get("/:id", getBlogId);
 
 /**
  * @swagger
- * /api/blogs/{id}:
+ * /api/v1/blogs/{id}:
  *   put:
  *     summary: Update a blog post
  *     tags: [Blogs]
@@ -197,10 +190,9 @@ router.get("/:id", getBlogId);
  */
 router.put("/:id", authMiddleware, updateBlog);
 
-
 /**
  * @swagger
- * /api/blogs/{id}:
+ * /api/v1/blogs/{id}:
  *   delete:
  *     summary: Delete a blog post
  *     tags: [Blogs]
@@ -231,7 +223,5 @@ router.put("/:id", authMiddleware, updateBlog);
  *         description: Bad request
  */
 router.delete("/:id", authMiddleware, deleteBlog);
-
-
 
 export default router;

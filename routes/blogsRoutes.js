@@ -53,12 +53,13 @@ const router = express.Router();
  *         id: 662c10d2f8d2b41d8c1a7e99
  *         title: "How to Build a REST API with Express"
  *         content: "This tutorial explains how to build a REST API using Node.js and Express."
- *
+ *         image: http://url
+ *         user: "2102993939399282"
  */
 
 /**
  * @swagger
- * /api/v1/blogs:
+ * /api/v1/blogs/:
  *   post:
  *     summary: Create a new blog post
  *     tags: [Blogs]

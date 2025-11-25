@@ -8,35 +8,33 @@ import {
 
 const router = Router();
 
-
-/** 
+/**
  * @swagger
  * tags:
  *   name: football
  *   description: Get fixtures, livescores, standings and top-players
-*/
-
+ */
 
 /**
  * @swagger
- * /api/v1/football/fixtures
+ * /api/v1/football/fixtures:
  *   get:
  *     summary: Get all fixtures
  *     tags: [football]
  *     parameters:
  *       - in: query
  *         name: date
- *         schema: 
+ *         schema:
  *           type: number
  *         required: true
  *         description: date(e.g, 2025-11-01)
  *     responses:
  *       200:
- *       description: Successfully fetched all fixtures
+ *         description: Successfully fetched all fixtures
  *       400:
  *         description: bad request
- *       500: 
- *         description: server error  
+ *       500:
+ *         description: server error
  */
 
 // get all fixtures for the day
@@ -47,31 +45,31 @@ router.get("/fixtures", getAllFixtures);
 
 /**
  * @swagger
- * /api/v1/football/livescores
+ * /api/v1/football/livescores:
  *   get:
  *     summary: Get all livescores
  *     tags: [football]
  *     responses:
  *       200:
- *       description: Successfully fetched livescores
- * 
- *       500: 
- *         description: server error  
+ *         description: Successfully fetched livescores
+ *       500:
+ *         description: server error
  */
 
 // get live scores
-router.get("/livescore", getLivescore);
+router.get("/livescores", getLivescore);
 
 /**
  * @swagger
  * /api/v1/football/standings
+ * /api/v1/football/fixtures:
  *   get:
  *     summary: Get all fixtures
  *     tags: [football]
  *     parameters:
  *       - in: query
  *         name: league ID
- *         schema: 
+ *         schema:
  *           type: number
  *         required: true
  *         description: league ID
@@ -84,10 +82,11 @@ router.get("/livescore", getLivescore);
  *     responses:
  *       200:
  *       description: Successfully fetched standings
+ *         description: Successfully fetched all fixtures
  *       400:
  *         description: bad request
- *       500: 
- *         description: server error  
+ *       500:
+ *         description: server error
  */
 
 // get standings

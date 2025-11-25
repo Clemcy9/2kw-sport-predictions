@@ -126,16 +126,16 @@ async function fetchLiveScore() {
   }
 }
 
-async function fetchStandings(leagueId, season) {
-  const params = {};
-  if (leagueId) params.leagueId = leagueId;
-  if (season) params.season = season;
+async function fetchStandings(args) {
+  const date = new Date();
+  const current_year = date.getFullYear();
+  const params = { ...args, seanson: current_year };
 
   const cached = await getCached("standings", params);
   if (cached) return cached;
 
   try {
-    const res = await api_client.get("/standings", params);
+    const res = await api_client.get("/standings", { params });
     await setCached("standings", res.data, params);
     return res.data;
   } catch (error) {

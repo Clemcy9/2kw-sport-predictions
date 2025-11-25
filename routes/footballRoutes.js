@@ -61,14 +61,13 @@ router.get("/livescores", getLivescore);
 
 /**
  * @swagger
- * /api/v1/football/standings
- * /api/v1/football/fixtures:
+ * /api/v1/football/standings:
  *   get:
  *     summary: Get all fixtures
  *     tags: [football]
  *     parameters:
  *       - in: query
- *         name: league ID
+ *         name: league
  *         schema:
  *           type: number
  *         required: true
@@ -77,18 +76,17 @@ router.get("/livescores", getLivescore);
  *         name: season
  *         schema:
  *           type: number
- *         required: true
- *         description: season(e.g 2025)
+ *           required: true
+ *           description: season(e.g 2025)
  *     responses:
  *       200:
- *       description: Successfully fetched standings
- *         description: Successfully fetched all fixtures
+ *         description: Successfully fetched standings
  *       400:
  *         description: bad request
  *       500:
  *         description: server error
  */
-
 // get standings
 router.get("/standings", getStandings);
+
 export default router;

@@ -19,46 +19,6 @@ const router = express.Router();
 
 /**
  * @swagger
- * components:
- *   schemas:
- *     Blog:
- *       type: object
- *       required:
- *         - title
- *         - content
- *         - image
- *       properties:
- *         id:
- *           type: string
- *           description: The auto-generated ID of the blog
- *         title:
- *           type: string
- *           description: Blog post title
- *         content:
- *           type: string
- *           description: Content of the blog post
- *         image:
- *           type: string
- *           description: http://url
- *         user:
- *           type: string
- *           description: ID of the user who created the blog
- *         createdAt:
- *           type: string
- *           format: date-time
- *         updatedAt:
- *           type: string
- *           format: date-time
- *       example:
- *         id: 662c10d2f8d2b41d8c1a7e99
- *         title: "How to Build a REST API with Express"
- *         content: "This tutorial explains how to build a REST API using Node.js and Express."
- *         image: http://url
- *         user: "2102993939399282"
- */
-
-/**
- * @swagger
  * /api/v1/blogs/:
  *   post:
  *     summary: Create a new blog post
@@ -68,7 +28,10 @@ const router = express.Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Blog'
+ *             example:
+ *               title: "Blog post"
+ *               body: "my first blog test post"
+ *               image: "https://picture.com/1"
  *     responses:
  *       201:
  *         description: Blog created successfully

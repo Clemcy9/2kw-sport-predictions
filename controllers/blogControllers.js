@@ -13,7 +13,8 @@ export const createBlog = async (req, res) => {
     if (!title || !body || !image) {
       return res.status(400).json("Please Fill In Those Fields");
     }
-    const newBlog = await Blog.create(req.body);
+    console.log("user:", req.user);
+    const newBlog = await Blog.create({ ...req.body, user: req.user.id });
     res.status(201).json({
       success: true,
       message: "Blog created successfully",
@@ -57,7 +58,8 @@ export const getBlogId = async (req, res) => {
 // update blog
 export const updateBlog = async (req, res) => {
   try {
-    if (!req.user || !req.user.isAdmin) {
+    if (!req.user) {
+      //|| !req.user.isAdmin
       return res
         .status(403)
         .json({ message: "Unauthorized user, only admin can update blog" });
@@ -79,7 +81,8 @@ export const updateBlog = async (req, res) => {
 // delete blog post
 export const deleteBlog = async (req, res) => {
   try {
-    if (!req.user || !req.user.isAdmin) {
+    if (!req.user) {
+      //|| !req.user.isAdmin
       return res.status(403).json({ message: "Unauthorized user" });
     }
 

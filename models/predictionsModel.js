@@ -88,4 +88,6 @@ const AdminPrediction = mongoose.model(
   "AdminPrediction",
   adminPredictionSchema
 );
+
+// presave hook to auto add percentage field to each adminPrediction
 export default AdminPrediction;

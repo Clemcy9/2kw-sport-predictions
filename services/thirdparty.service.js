@@ -129,7 +129,7 @@ async function fetchLiveScore() {
 async function fetchStandings(args) {
   const date = new Date();
   const current_year = date.getFullYear();
-  const params = { ...args, seanson: current_year };
+  const params = args.season ? { ...args } : { ...args, season: current_year };
 
   const cached = await getCached("standings", params);
   if (cached) return cached;
@@ -146,10 +146,29 @@ async function fetchStandings(args) {
   }
 }
 
+//
+async function fetchTopPlayer() {
+  const cached = await getCached("top-player");
+
+  if (cached) return cached;
+
+  try {
+    const res = await api_client.get("/players/topscorers");
+    await setCached("top-player", res.data);
+    return res.data;
+  } catch (error) {
+    if (error.response)
+      console.log("FetchTopScorerError1:", error.response.data);
+    if (error.request) console.log("FetchTopScorerError2:", error.request);
+    else console.log("FetchTopScorerError3:", error.message);
+  }
+}
+
 export {
   fetchFixtures,
   fetchOdds,
   fetchLiveScore,
   fetchPredictions,
   fetchStandings,
+  fetchTopPlayer,
 };

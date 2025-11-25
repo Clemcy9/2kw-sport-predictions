@@ -25,5 +25,4 @@ const getMatches = async (req, res) => {
   }
 };
 
-// get all fixtures
 export default getMatches;

@@ -1,5 +1,5 @@
-import express from "express"
-import getMatches from "../controllers/matchControllers.js"
+import express from "express";
+import getMatches from "../controllers/matchControllers.js";
 
 const router = express.Router();
 
@@ -59,7 +59,6 @@ const router = express.Router();
  *           teamB: 0
  */
 
-
 /**
  * @swagger
  * /api/matches:
@@ -111,8 +110,8 @@ const router = express.Router();
  *         description: Internal server error
  */
 
-router.get("/", getMatches)
+router.get("/", getMatches);
 
+// get all fixtures
 
-
-export default router
+export default router;

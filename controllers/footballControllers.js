@@ -3,16 +3,18 @@ import {
   fetchLiveScore,
   fetchPredictions,
   fetchStandings,
+  fetchTopPlayer,
 } from "../services/thirdparty.service.js";
+
 async function getAllFixtures(req, res) {
   const today = new Date().toISOString().split("T")[0];
-  const date = req.body?.date || today;
+  const date = req.query?.date || today;
   const fixtures = await fetchFixtures(date);
   res.status(200).json({ message: "successful", data: fixtures });
 }
 
 async function getPredictions(req, res) {
-  const fixture_id = req.params.fixture_id;
+  const fixture_id = req.query.fixture_id;
   if (!fixture_id)
     return res.status(400).json({ message: "error, fixture id required" });
 
@@ -35,15 +37,31 @@ async function getLivescore(req, res) {
 }
 
 async function getStandings(req, res) {
-  const { leagueId, season } = req.params;
-  if (!leagueId)
-    return res.status(400).json({ message: "leagueId is required" });
+  // const { league, season } = req.query;
+  const league = req.query.league;
+  const season = req.query.season;
+  if (!league) return res.status(400).json({ message: "league is required" });
 
   try {
-    const standings = await fetchStandings(leagueId, season);
+    const standings = await fetchStandings({ league, season });
     res.status(200).json({ message: "successful", data: standings });
   } catch (error) {
     res.status(500).json({ message: "error occured", error });
   }
 }
-export { getAllFixtures, getPredictions, getLivescore, getStandings };
+
+async function getTopPlayer(req, res) {
+  try {
+    const top_scorer = await fetchTopPlayer();
+    res.status(200).json({ message: "successful", data: top_scorer });
+  } catch (error) {
+    res.status(500).json({ message: "error occured", error });
+  }
+}
+export {
+  getAllFixtures,
+  getPredictions,
+  getLivescore,
+  getStandings,
+  getTopPlayer,
+};

@@ -51,8 +51,12 @@ async function getStandings(req, res) {
 }
 
 async function getTopPlayer(req, res) {
+  const league = req.query.league;
+  const season = req.query.season;
+  if (!league) return res.status(400).json({ message: "league is required" });
+
   try {
-    const top_scorer = await fetchTopPlayer();
+    const top_scorer = await fetchTopPlayer({ league, season });
     res.status(200).json({ message: "successful", data: top_scorer });
   } catch (error) {
     res.status(500).json({ message: "error occured", error });

@@ -23,6 +23,13 @@ const router = Router();
  *   get:
  *     summary: Get all fixtures
  *     tags: [football]
+ *     parameters:
+ *       - in: query
+ *         name: date
+ *         schema: 
+ *           type: number
+ *         required: true
+ *         description: date(e.g, 2025-11-01)
  *     responses:
  *       200:
  *       description: Successfully fetched all fixtures
@@ -57,13 +64,26 @@ router.get("/livescore", getLivescore);
 
 /**
  * @swagger
- * /api/v1/football/fixtures
+ * /api/v1/football/standings
  *   get:
  *     summary: Get all fixtures
  *     tags: [football]
+ *     parameters:
+ *       - in: query
+ *         name: league ID
+ *         schema: 
+ *           type: number
+ *         required: true
+ *         description: league ID
+ *       - in: query
+ *         name: season
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: season(e.g 2025)
  *     responses:
  *       200:
- *       description: Successfully fetched all fixtures
+ *       description: Successfully fetched standings
  *       400:
  *         description: bad request
  *       500: 

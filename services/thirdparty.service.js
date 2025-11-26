@@ -110,13 +110,13 @@ async function fetchOdds(args) {
 }
 
 async function fetchLiveScore() {
-  const params = {live:'all'}
+  const params = { live: "all" };
   const cached = await getCached("predictions", params);
 
   if (cached) return cached;
 
   try {
-    const res = await api_client.get("/features/livescore", {params});
+    const res = await api_client.get("/fixtures", { params });
     await setCached("livescore", res.data, params);
     return res.data;
   } catch (error) {
@@ -153,7 +153,7 @@ async function fetchTopPlayer(args) {
   const current_year = date.getFullYear();
   const params = args.season ? { ...args } : { ...args, season: current_year };
 
-  const cached = await getCached("top-player");
+  const cached = await getCached("top-player", params);
 
   if (cached) return cached;
 

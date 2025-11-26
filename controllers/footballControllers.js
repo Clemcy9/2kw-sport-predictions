@@ -8,8 +8,9 @@ import {
 
 async function getAllFixtures(req, res) {
   const today = new Date().toISOString().split("T")[0];
+  console.log("today:", today);
   const date = req.query?.date || today;
-  const fixtures = await fetchFixtures(date);
+  const fixtures = await fetchFixtures({ date });
   res.status(200).json({ message: "successful", data: fixtures });
 }
 

@@ -4,6 +4,7 @@ import {
   getLivescore,
   getPredictions,
   getStandings,
+  getTopPlayer,
 } from "../controllers/footballControllers.js";
 
 const router = Router();
@@ -25,8 +26,7 @@ const router = Router();
  *       - in: query
  *         name: date
  *         schema:
- *           type: number
- *         required: true
+ *           type: string
  *         description: date(e.g, 2025-11-01)
  *     responses:
  *       200:
@@ -88,5 +88,35 @@ router.get("/livescores", getLivescore);
  */
 // get standings
 router.get("/standings", getStandings);
+
+/**
+ * @swagger
+ * /api/v1/football/topscorers:
+ *   get:
+ *     summary: Get all fixtures
+ *     tags: [football]
+ *     parameters:
+ *       - in: query
+ *         name: league
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: league ID
+ *       - in: query
+ *         name: season
+ *         schema:
+ *           type: number
+ *           required: true
+ *           description: season(e.g 2025)
+ *     responses:
+ *       200:
+ *         description: Successfully fetched standings
+ *       400:
+ *         description: bad request
+ *       500:
+ *         description: server error
+ */
+// get topscorers
+router.get("/topscorers", getTopPlayer);
 
 export default router;

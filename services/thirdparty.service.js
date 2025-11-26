@@ -110,13 +110,14 @@ async function fetchOdds(args) {
 }
 
 async function fetchLiveScore() {
-  const cached = await getCached("predictions");
+  const params = {live:'all'}
+  const cached = await getCached("predictions", params);
 
   if (cached) return cached;
 
   try {
-    const res = await api_client.get("/livescore");
-    await setCached("livescore", res.data);
+    const res = await api_client.get("/features/livescore", {params});
+    await setCached("livescore", res.data, params);
     return res.data;
   } catch (error) {
     if (error.response)

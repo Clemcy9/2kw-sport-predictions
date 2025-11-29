@@ -13,4 +13,4 @@ await connectRedis();
 
 // start background service
 // await startBackgroundTask();
-app.listen(process.env.PORT, () => console.log("server running"));
+app.listen(process.env.PORT || 5000, () => console.log("server running"));

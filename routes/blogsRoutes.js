@@ -7,14 +7,49 @@ import {
   deleteBlog,
 } from "../controllers/blogControllers.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import { upload } from "../middleware/fileUploadMiddleware.js";
 
 const router = express.Router();
 
 /**
  * @swagger
- * tags:
- *   name: Blogs
- *   description: Blog CRUD
+ * components:
+ *   schemas:
+ *     Blog:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           example: 64f3b5a3fbd12c0012345678
+ *         user:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: ["64f3b5a3fbd12c0012345678"]
+ *         title:
+ *           type: string
+ *           example: "My first blog post"
+ *         body:
+ *           type: string
+ *           example: "This is the body of my first blog post"
+ *         image_url:
+ *           type: string
+ *           example: "http://localhost:5000/uploads/123456789.png"
+ *         views:
+ *           type: integer
+ *           example: 0
+ *         status:
+ *           type: string
+ *           enum: [draft, published, seo]
+ *           example: draft
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-11-29T20:00:00.000Z"
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-11-29T20:00:00.000Z"
  */
 
 /**
@@ -26,16 +61,30 @@ const router = express.Router();
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             example:
- *               title: "Blog post"
- *               body: "my first blog test post"
- *               image: {
-                    type: "string",
-                    format: "binary",
-                    description: "Image file to upload"
-                  }
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Blog title
+ *                 example: "My first blog post"
+ *               body:
+ *                 type: string
+ *                 description: Blog content
+ *                 example: "This is the body of my first blog post"
+ *               status:
+ *                 type: string
+ *                 description: Blog status
+ *                 enum: [draft, published, seo]
+ *                 example: draft
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Image file (png, jpeg, jpg) to upload
+ *             required:
+ *               - title
+ *               - body
  *     responses:
  *       201:
  *         description: Blog created successfully
@@ -55,7 +104,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/", authMiddleware, createBlog);
+router.post("/", authMiddleware, upload.single("image"), createBlog);
 
 /**
  * @swagger

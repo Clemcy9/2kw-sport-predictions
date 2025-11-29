@@ -5,16 +5,35 @@ import Blog from "../models/blogModel.js";
 export const createBlog = async (req, res) => {
   try {
     if (!req.user) {
+      if (req.file) {
+        fs.unlinkSync(path.join("uploads", req.file.filename));
+      }
       return res
         .status(403)
         .json({ message: "unathorized only admin can perform this action" });
     }
+
+    // image upload is optional
+    let imageUrl = "";
+    if (req.file) {
+      imageUrl = `${req.protocol}://${req.get("host")}/uploads/${
+        req.file.filename
+      }`;
+    }
     const { title, body, image } = req.body;
-    if (!title || !body || !image) {
+    if (!title || !body) {
+      // delete uploaded file if exists but other fields are missing
+      if (req.file) {
+        fs.unlinkSync(path.join("uploads", req.file.filename));
+      }
       return res.status(400).json("Please Fill In Those Fields");
     }
     console.log("user:", req.user);
-    const newBlog = await Blog.create({ ...req.body, user: req.user.id });
+    const newBlog = await Blog.create({
+      ...req.body,
+      user: req.user.id,
+      image_url: imageUrl,
+    });
     res.status(201).json({
       success: true,
       message: "Blog created successfully",

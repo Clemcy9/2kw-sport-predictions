@@ -31,7 +31,11 @@ const router = express.Router();
  *             example:
  *               title: "Blog post"
  *               body: "my first blog test post"
- *               image: "https://picture.com/1"
+ *               image: {
+                    type: "string",
+                    format: "binary",
+                    description: "Image file to upload"
+                  }
  *     responses:
  *       201:
  *         description: Blog created successfully

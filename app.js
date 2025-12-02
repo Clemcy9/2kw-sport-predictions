@@ -31,6 +31,23 @@ app.post("/upload", upload.single("image"), (req, res) => {
 // Serve uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+app.post("/upload/profile", upload.single("profile"), async (req, res) => {
+  const { email, name } = req.body;
+  console.log("file uploading:", email);
+  let imageUrl = "";
+  if (req.file) {
+    imageUrl = `${req.protocol}://${req.get("host")}/uploads/${
+      req.file.filename
+    }`;
+  }
+  res.status(201).json({
+    message: "profile uploaded",
+    profile_url: imageUrl,
+    email,
+    name,
+  });
+});
+
 // get /
 app.get("/", async (req, res) => {
   res.status(200).json({ message: "welcome to root route" });

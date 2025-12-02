@@ -87,6 +87,27 @@ async function fetchOdds(args) {
     // scraping out unneccessary data (cleaning dataset)
     const cleaned_odds = odds.map((odd) => {
       const fx = odd.fixture[0]; // the actual fixture object
+
+      // add percentage to each odd value
+      const bets =
+        odd.bookmakers?.[0]?.bets?.map((bet) => ({
+          ...bet,
+          values:
+            bet.values?.map((v) => {
+              const oddNumber = parseFloat(v.odd);
+
+              // avoid division by zero
+              const percentage =
+                oddNumber && oddNumber > 0
+                  ? ((1 / oddNumber) * 100).toFixed(2)
+                  : null;
+
+              return {
+                ...v,
+                percentage,
+              };
+            }) ?? [],
+        })) ?? [];
       return {
         fixture: {
           fixture: fx.fixture,

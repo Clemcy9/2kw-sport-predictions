@@ -12,7 +12,7 @@ const api_client = axios.create({
   baseURL: RAPIDSPORT_BASE_URL,
   headers: {
     // Authorization: `Bearer ${RAPIDSPORT_API_KEY}`,
-    "x-RapidAPI-Host": RAPIDSPORT_API_HOST,
+    // "x-RapidAPI-Host": RAPIDSPORT_API_HOST,
     "x-apisports-key": RAPIDSPORT_API_KEY,
     Accept: "application/json",
   },
@@ -102,10 +102,11 @@ async function fetchOdds(args) {
                   ? ((1 / oddNumber) * 100).toFixed(2)
                   : null;
 
-              return {
-                ...v,
-                percentage,
-              };
+              // return {
+              //   ...v,
+              //   percentage,
+              // };
+              v.percentage = percentage;
             }) ?? [],
         })) ?? [];
       return {

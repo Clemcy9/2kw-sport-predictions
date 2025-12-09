@@ -58,76 +58,170 @@ async function fetchPredictions(matchId) {
   }
 }
 
+// async function fetchOdds(args) {
+//   // const params = { date, fixture_id, bet };
+//   console.log("in fetchodds");
+//   const params = { ...args, bookmaker: 11 };
+//   // console.log("fetchodds params:", params);
+
+//   const cached = await getCached("odds", params);
+//   // console.log("response from cache:", cached);
+
+//   if (cached) return cached;
+
+//   try {
+//     const res = await api_client.get("/odds", { params });
+
+//     const odds = await res.data.response;
+//     // console.log("response fetch:", odds);
+
+//     // replacing fixture id, with actual fixture details by fetching fixture with each unique id
+//     await Promise.all(
+//       odds.map(async (odd) => {
+//         const fixture_details = await fetchFixtures({ id: odd.fixture.id });
+//         odd.fixture = fixture_details.response;
+//         // console.log("old fixture:", odd.fixture);
+//       })
+//     );
+
+//     // scraping out unneccessary data (cleaning dataset)
+//     const cleaned_odds = odds.map((odd) => {
+//       const fx = odd.fixture[0]; // the actual fixture object
+
+//       // add percentage to each odd value
+//       const bets =
+//         odd.bookmakers?.[0]?.bets?.map((bet) => ({
+//           ...bet,
+//           values:
+//             bet.values?.map((v) => {
+//               const oddNumber = parseFloat(v.odd);
+
+//               // avoid division by zero
+//               const percentage =
+//                 oddNumber && oddNumber > 0
+//                   ? ((1 / oddNumber) * 100).toFixed(2)
+//                   : null;
+
+//               // return {
+//               //   ...v,
+//               //   percentage,
+//               // };
+//               v.percentage = percentage;
+//             }) ?? [],
+//         })) ?? [];
+//       return {
+//         fixture: {
+//           fixture: fx.fixture,
+//           league: fx.league,
+//           teams: fx.teams,
+//           goals: fx.goals,
+//           status: fx.fixture.status, // nested
+//         },
+//         bets: odd.bookmakers?.[0]?.bets ?? [],
+//       };
+//     });
+//     // console.log("cleaned odds:", cleaned_odds);
+
+//     await setCached("odds", cleaned_odds, params);
+//     return cleaned_odds;
+//   } catch (error) {
+//     if (error.response) console.log("FetchOddsError1:", error.response.data);
+//     if (error.request) console.log("FetchOddsError2:", error.request);
+//     else console.log("FetchOddsError3:", error.message);
+//   }
+// }
+
+// this version make multiple request in a call, to account for multiple paginated api structure
 async function fetchOdds(args) {
-  // const params = { date, fixture_id, bet };
-  console.log("in fetchodds");
+  console.log("in fetchOdds");
+
   const params = { ...args, bookmaker: 11 };
-  // console.log("fetchodds params:", params);
 
+  // 1️⃣ Check cache first
   const cached = await getCached("odds", params);
-  // console.log("response from cache:", cached);
-
   if (cached) return cached;
 
   try {
-    const res = await api_client.get("/odds", { params });
+    // 2️⃣ FIRST REQUEST to detect total pages
+    const firstRes = await api_client.get("/odds", { params });
+    const firstData = firstRes.data;
 
-    const odds = await res.data.response;
-    // console.log("response fetch:", odds);
+    let allOdds = [...firstData.response];
+    const totalPages = firstData.paging?.total || 1;
 
-    // replacing fixture id, with actual fixture details by fetching fixture with each unique id
-    await Promise.all(
-      odds.map(async (odd) => {
-        const fixture_details = await fetchFixtures({ id: odd.fixture.id });
-        odd.fixture = fixture_details.response;
-        // console.log("old fixture:", odd.fixture);
-      })
-    );
+    // 3️⃣ FETCH REMAINING PAGES (up to 4 pages)
+    for (let page = 2; page <= totalPages && page <= 5; page++) {
+      const pageRes = await api_client.get("/odds", {
+        params: { ...params, page },
+      });
+      allOdds.push(...pageRes.data.response);
+    }
 
-    // scraping out unneccessary data (cleaning dataset)
-    const cleaned_odds = odds.map((odd) => {
-      const fx = odd.fixture[0]; // the actual fixture object
+    // Helper: small delay to avoid rate-limits
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-      // add percentage to each odd value
+    // 4️⃣ FETCH FIXTURE DETAILS sequentially using for…of
+    for (const odd of allOdds) {
+      try {
+        if (odd.fixture?.id) {
+          const fixtureRes = await fetchFixtures({ id: odd.fixture.id });
+          odd.fixture_full = fixtureRes?.response?.[0] ?? null;
+        } else {
+          odd.fixture_full = null;
+        }
+      } catch (e) {
+        console.log("Fixture fetch error:", e.message);
+        odd.fixture_full = null;
+      }
+      await wait(250); // small delay between requests
+    }
+
+    // 5️⃣ CLEAN + CALCULATE PERCENTAGES
+    const cleaned = allOdds.map((odd) => {
+      const fx = odd.fixture_full;
+
+      // Safe fixture structure
+      const fixture = fx
+        ? {
+            league: fx.league,
+            fixture: fx.fixture,
+            teams: fx.teams,
+            goals: fx.goals,
+            status: fx.fixture?.status,
+          }
+        : {
+            league: null,
+            fixture: null,
+            teams: null,
+            goals: null,
+            status: null,
+          };
+
+      // bets with percentage
       const bets =
         odd.bookmakers?.[0]?.bets?.map((bet) => ({
           ...bet,
           values:
             bet.values?.map((v) => {
               const oddNumber = parseFloat(v.odd);
-
-              // avoid division by zero
-              const percentage =
+              v.percentage =
                 oddNumber && oddNumber > 0
                   ? ((1 / oddNumber) * 100).toFixed(2)
                   : null;
-
-              // return {
-              //   ...v,
-              //   percentage,
-              // };
-              v.percentage = percentage;
+              return v;
             }) ?? [],
         })) ?? [];
-      return {
-        fixture: {
-          fixture: fx.fixture,
-          league: fx.league,
-          teams: fx.teams,
-          goals: fx.goals,
-          status: fx.fixture.status, // nested
-        },
-        bets: odd.bookmakers?.[0]?.bets ?? [],
-      };
-    });
-    // console.log("cleaned odds:", cleaned_odds);
 
-    await setCached("odds", cleaned_odds, params);
-    return cleaned_odds;
+      return { fixture, bets };
+    });
+
+    // 6️⃣ CACHE RESULT
+    await setCached("odds", cleaned, params);
+
+    return cleaned;
   } catch (error) {
-    if (error.response) console.log("FetchOddsError1:", error.response.data);
-    if (error.request) console.log("FetchOddsError2:", error.request);
-    else console.log("FetchOddsError3:", error.message);
+    console.log("FetchOddsError:", error.message);
+    return [];
   }
 }
 

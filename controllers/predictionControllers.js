@@ -12,29 +12,35 @@ function oddsFilter(
   stop_percent = 85,
   required_market = null
 ) {
-  const filteredOdds = []
-    .filter((odd) => {
+  console.log("oddsfiltercalled, market:", required_market);
+  const filteredOdds = odds
+    .map((odd) => {
       // filtering bets -1st loop
       const filteredBets = odd.bets
         .map((bet) => {
           // filtering vaules -2nd loop
           const filteredValues = bet.values.filter((v) => {
+            console.log("v is:", v);
             const p = parseFloat(v.percentage);
-            return code
+            return required_market
               ? p >= start_percent &&
-                  p > stop_percent &&
-                  v.name === required_market
-              : p >= start_percent && p > stop_percent;
+                  p <= stop_percent &&
+                  v.value.toLowerCase() === required_market
+              : p >= start_percent && p <= stop_percent;
           });
-          return filteredValues.length > 0 ? { ...bet, filteredValues } : null;
+          console.log("filteredvalues:", filteredValues);
+          return filteredValues.length > 0
+            ? { ...bet, values: filteredValues }
+            : null;
         })
         .filter((b) => b !== null);
       if (filteredBets.length === 0) return null;
-
+      console.log("oddfilter, filteredBets:", filteredBets);
       // return the odd with cleaned bets
       return { ...odd, bets: filteredBets };
     })
     .filter((odd) => odd !== null);
+  return filteredOdds;
 }
 
 // get odds :admin via fixture, users via odds_type(called bet)
@@ -43,7 +49,7 @@ export const getOdds = async (req, res) => {
   console.log("getodds> body:", req.query);
   const fixture = req.query?.fixture;
   const bet = req.query?.bet;
-  const name = req.query?.name; //used 2 distinguish bet with multi values like home/away, over/under ...
+  const name = req.query?.market_name; //used 2 distinguish bet with multi values like home/away, over/under ...
   const date = new Date().toISOString().split("T")[0];
 
   if (!fixture && !bet)
@@ -75,9 +81,10 @@ export const getOdds = async (req, res) => {
       }
       const odds = await fetchOdds({ bet, date });
       const cleaned_odds = oddsFilter(odds, 65, 85, name);
+      console.log("getodds, cleanded_odds:", cleaned_odds);
       return res.status(200).json({
         message: "successful",
-        data: odds,
+        data: cleaned_odds,
       });
     } else {
       // get odds[] based on a particular fixture, mainly for admin page

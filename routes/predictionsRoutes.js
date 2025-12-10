@@ -74,6 +74,12 @@ const router = express.Router();
  *           type: number
  *         required: false
  *         description: Bet/odds category ID (user odds lookup)
+ *       - in: query
+ *         name: market_name
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: market name like home or over 1.5 to help distinguish b/w composite response
  *     responses:
  *       200:
  *         description: Odds or admin predictions returned successfully

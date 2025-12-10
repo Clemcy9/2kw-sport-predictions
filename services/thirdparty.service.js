@@ -138,8 +138,8 @@ async function fetchOdds(args) {
   const params = { ...args, bookmaker: 11 };
 
   // 1️⃣ Check cache first
-  // const cached = await getCached("odds", params);
-  // if (cached) return cached;
+  const cached = await getCached("odds", params);
+  if (cached) return cached;
 
   try {
     // 2️⃣ FIRST REQUEST to detect total pages

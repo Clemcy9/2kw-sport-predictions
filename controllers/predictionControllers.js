@@ -25,7 +25,7 @@ function oddsFilter(
             return required_market
               ? p >= start_percent &&
                   p <= stop_percent &&
-                  v.value.toLowerCase() === required_market
+                  v.value.toLowerCase() === required_market.toLowerCase()
               : p >= start_percent && p <= stop_percent;
           });
           console.log("filteredvalues:", filteredValues);
@@ -80,8 +80,15 @@ export const getOdds = async (req, res) => {
         });
       }
       const odds = await fetchOdds({ bet, date });
+
+      // for double chance and both team score filter without market name
+      if (parseInt(bet) === 8 || parseInt(bet) === 12) {
+        return res.status(200).json({
+          message: "successful",
+          data: oddsFilter(odds, 65, 85),
+        });
+      }
       const cleaned_odds = oddsFilter(odds, 65, 85, name);
-      console.log("getodds, cleanded_odds:", cleaned_odds);
       return res.status(200).json({
         message: "successful",
         data: cleaned_odds,

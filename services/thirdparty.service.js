@@ -138,8 +138,8 @@ async function fetchOdds(args) {
   const params = { ...args, bookmaker: 11 };
 
   // 1️⃣ Check cache first
-  const cached = await getCached("odds", params);
-  if (cached) return cached;
+  // const cached = await getCached("odds", params);
+  // if (cached) return cached;
 
   try {
     // 2️⃣ FIRST REQUEST to detect total pages
@@ -177,55 +177,54 @@ async function fetchOdds(args) {
     }
 
     // 5️⃣ CLEAN + CALCULATE PERCENTAGES
-    const cleaned = allOdds
-      .map((odd) => {
-        const fx = odd.fixture_full;
+    const cleaned = allOdds.map((odd) => {
+      const fx = odd.fixture_full;
 
-        // Safe fixture structure
-        const fixture = fx
-          ? {
-              league: fx.league,
-              fixture: fx.fixture,
-              teams: fx.teams,
-              goals: fx.goals,
-              status: fx.fixture?.status,
-            }
-          : {
-              league: null,
-              fixture: null,
-              teams: null,
-              goals: null,
-              status: null,
-            };
+      // Safe fixture structure
+      const fixture = fx
+        ? {
+            league: fx.league,
+            fixture: fx.fixture,
+            teams: fx.teams,
+            goals: fx.goals,
+            status: fx.fixture?.status,
+          }
+        : {
+            league: null,
+            fixture: null,
+            teams: null,
+            goals: null,
+            status: null,
+          };
 
-        // bets with percentage
-        const bets =
-          odd.bookmakers?.[0]?.bets?.map((bet) => ({
-            ...bet,
-            values:
-              bet.values?.map((v) => {
-                const oddNumber = parseFloat(v.odd);
-                v.percentage =
-                  oddNumber && oddNumber > 0
-                    ? ((1 / oddNumber) * 100).toFixed(2)
-                    : null;
-                return v;
-              }) ?? [],
-          })) ?? [];
+      // bets with percentage
+      const bets =
+        odd.bookmakers?.[0]?.bets?.map((bet) => ({
+          ...bet,
+          values:
+            bet.values?.map((v) => {
+              const oddNumber = parseFloat(v.odd);
+              v.percentage =
+                oddNumber && oddNumber > 0
+                  ? ((1 / oddNumber) * 100).toFixed(2)
+                  : null;
+              return v;
+            }) ?? [],
+        })) ?? [];
 
-        return { fixture, bets };
-      })
-      // 6️⃣ FILTER: only keep odds with at least one value in percentage range 65-85
-      .filter((odd) =>
-        odd.bets.some((bet) =>
-          bet.values.some(
-            (v) =>
-              v.percentage &&
-              parseFloat(v.percentage) >= 65 &&
-              parseFloat(v.percentage) <= 85
-          )
-        )
-      );
+      return { fixture, bets };
+    });
+    // 6️⃣ FILTER: only keep odds with at least one value in percentage range 65-85
+    // .filter((odd) =>
+    //   odd.bets.some((bet) =>
+    //     bet.values.some(
+    //       (v) =>
+    //         v.percentage &&
+    //         parseFloat(v.percentage) >= 65 &&
+    //         parseFloat(v.percentage) <= 85
+    //     )
+    //   )
+    // );
 
     // 6️⃣ CACHE RESULT
     await setCached("odds", cleaned, params);

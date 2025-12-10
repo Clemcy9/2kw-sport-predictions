@@ -6,13 +6,34 @@ import {
   fetchPredictions,
 } from "../services/thirdparty.service.js";
 
+const admin_required_market = [
+  "home",
+  "away",
+  "over 1.5",
+  "over 2.5",
+  "under 1.5",
+  "under 2.5",
+  "yes",
+  "no",
+  "home/draw",
+  "home/away",
+  "draw/away",
+];
+
 function oddsFilter(
   odds,
   start_percent = 65,
   stop_percent = 85,
   required_market = null
 ) {
-  console.log("oddsfiltercalled, market:", required_market);
+  // allway makesure the required market is an array
+  let marketList = null;
+  if (required_market) {
+    marketList = Array.isArray(required_market)
+      ? required_market
+      : [required_market];
+  }
+
   const filteredOdds = odds
     .map((odd) => {
       // filtering bets -1st loop
@@ -22,10 +43,15 @@ function oddsFilter(
           const filteredValues = bet.values.filter((v) => {
             console.log("v is:", v);
             const p = parseFloat(v.percentage);
+            // return required_market
+            //   ? p >= start_percent &&
+            //       p <= stop_percent &&
+            //       v.value.toLowerCase() === required_market.toLowerCase()
+            //   : p >= start_percent && p <= stop_percent;
             return required_market
               ? p >= start_percent &&
                   p <= stop_percent &&
-                  v.value.toLowerCase() === required_market.toLowerCase()
+                  marketList.includes(v.value.toLowerCase())
               : p >= start_percent && p <= stop_percent;
           });
           console.log("filteredvalues:", filteredValues);
@@ -96,6 +122,7 @@ export const getOdds = async (req, res) => {
     } else {
       // get odds[] based on a particular fixture, mainly for admin page
       const odds = await fetchOdds({ fixture });
+      const cleaned_data = oddsFilter(odds, 65, 85, admin_required_market);
       res.status(200).json({ message: "successful", data: odds });
     }
   } catch (error) {

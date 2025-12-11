@@ -20,11 +20,19 @@ const admin_required_market = [
   "draw/away",
 ];
 
+const admin_required_bets = [
+  "match winner",
+  "goals over/under",
+  "both teams score",
+  "double chance",
+];
+
 function oddsFilter(
   odds,
   start_percent = 65,
   stop_percent = 85,
-  required_market = null
+  required_market = null,
+  required_bet = null
 ) {
   // allway makesure the required market is an array
   let marketList = null;
@@ -34,34 +42,42 @@ function oddsFilter(
       : [required_market];
   }
 
+  // for required_bets
+  let betList = null;
+  if (required_bet) {
+    betList = Array.isArray(required_bet) ? required_bet : [required_bet];
+  }
+  console.log("total odds:", odds.length);
   const filteredOdds = odds
     .map((odd) => {
       // filtering bets -1st loop
+      // filter out unwanted bets before maping
       const filteredBets = odd.bets
+        .filter((b) => {
+          // only filter if theres a betlist else skip
+          if (!betList) {
+            return true;
+          } else {
+            return betList.includes(b.name.toLowerCase());
+          }
+        })
         .map((bet) => {
           // filtering vaules -2nd loop
           const filteredValues = bet.values.filter((v) => {
-            console.log("v is:", v);
             const p = parseFloat(v.percentage);
-            // return required_market
-            //   ? p >= start_percent &&
-            //       p <= stop_percent &&
-            //       v.value.toLowerCase() === required_market.toLowerCase()
-            //   : p >= start_percent && p <= stop_percent;
             return required_market
               ? p >= start_percent &&
                   p <= stop_percent &&
                   marketList.includes(v.value.toLowerCase())
               : p >= start_percent && p <= stop_percent;
           });
-          console.log("filteredvalues:", filteredValues);
           return filteredValues.length > 0
             ? { ...bet, values: filteredValues }
             : null;
         })
         .filter((b) => b !== null);
+
       if (filteredBets.length === 0) return null;
-      console.log("oddfilter, filteredBets:", filteredBets);
       // return the odd with cleaned bets
       return { ...odd, bets: filteredBets };
     })
@@ -122,8 +138,14 @@ export const getOdds = async (req, res) => {
     } else {
       // get odds[] based on a particular fixture, mainly for admin page
       const odds = await fetchOdds({ fixture });
-      const cleaned_data = oddsFilter(odds, 65, 85, admin_required_market);
-      res.status(200).json({ message: "successful", data: odds });
+      const cleaned_data = oddsFilter(
+        odds,
+        65,
+        85,
+        admin_required_market,
+        admin_required_bets
+      );
+      res.status(200).json({ message: "successful", data: cleaned_data });
     }
   } catch (error) {
     console.log(error);

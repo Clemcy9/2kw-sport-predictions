@@ -35,18 +35,21 @@ function oddsFilter(
   required_bet = null
 ) {
   // allway makesure the required market is an array
-  let marketList = null;
-  if (required_market) {
-    marketList = Array.isArray(required_market)
-      ? required_market
-      : [required_market];
-  }
+  // normalize required markets
+  let marketList = required_market
+    ? (Array.isArray(required_market)
+        ? required_market
+        : [required_market]
+      ).map((m) => m.toLowerCase())
+    : null;
 
-  // for required_bets
-  let betList = null;
-  if (required_bet) {
-    betList = Array.isArray(required_bet) ? required_bet : [required_bet];
-  }
+  // normalize required bets
+  let betList = required_bet
+    ? (Array.isArray(required_bet) ? required_bet : [required_bet]).map((b) =>
+        b.toLowerCase()
+      )
+    : null;
+
   console.log("total odds:", odds.length);
   const filteredOdds = odds
     .map((odd) => {
@@ -91,6 +94,8 @@ export const getOdds = async (req, res) => {
   const todayEnd = new Date().setHours(23, 59, 59, 999);
   const todays_date = new Date(todayStart).toISOString().split("T")[0];
   const date = odd_date ? odd_date : todays_date;
+
+  console.log("payload is:", req.query);
 
   if (!fixture && !bet)
     return res

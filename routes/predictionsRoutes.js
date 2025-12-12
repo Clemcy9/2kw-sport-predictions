@@ -50,7 +50,6 @@ const router = express.Router();
  *         bet: 100
  *         fixture: 223344
  */
-
 /**
  * @swagger
  * /api/v1/admin/predictions/odds:
@@ -58,8 +57,9 @@ const router = express.Router();
  *     summary: Fetch betting odds for a fixture or odds type
  *     description: >
  *       - Admin: provide **fixture** to fetch odds for a specific fixture
- *       - Users: provide **betId** (e.g., free_tips_id, sure_odds) to fetch odds for the day
- *       If betId is >= 100, admin-saved predictions for today are returned.
+ *       - Users: provide **bet** (e.g., free_tips_id, sure_odds) to fetch odds for the day
+ *       - If bet >= 100, admin-saved predictions for the given date are returned.
+ *       - Users can optionally provide **odd_date** in `YYYY-MM-DD` format to fetch odds for a specific date. Defaults to today.
  *     tags: [Predictions]
  *     parameters:
  *       - in: query
@@ -79,15 +79,23 @@ const router = express.Router();
  *         schema:
  *           type: string
  *         required: false
- *         description: market name like home or over 1.5 to help distinguish b/w composite response
+ *         description: Market name (e.g., home, over 1.5) to distinguish composite responses
+ *       - in: query
+ *         name: odd_date
+ *         schema:
+ *           type: string
+ *           format: date
+ *         required: false
+ *         description: Optional date in `YYYY-MM-DD` format to fetch odds for a specific day (defaults to today)
  *     responses:
  *       200:
  *         description: Odds or admin predictions returned successfully
  *       400:
- *         description: Missing fixture or betId
+ *         description: Missing fixture or bet
  *       500:
  *         description: Server error
  */
+
 router.get("/odds", getOdds);
 
 /**
@@ -150,38 +158,10 @@ router.get("/odds", getOdds);
  *     responses:
  *       201:
  *         description: Predictions created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: created
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/AdminPrediction'
  *       400:
  *         description: Invalid input (no payload provided)
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 msg:
- *                   type: string
- *                   example: Please provide bet values
  *       500:
  *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Internal server error
  */
 
 router.post("/", authMiddleware, createPredictions);

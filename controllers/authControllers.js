@@ -81,7 +81,11 @@ export const loginController = async (req, res) => {
 
     // generate token
     const token = createToken(user);
-    res.status(200).json({ msg: "login successfully", token: token });
+    res.status(200).json({
+      msg: "login successfully",
+      token: token,
+      email: user.email,
+    });
   } catch (error) {
     res.status(500).json({ msg: "Server error", error });
   }

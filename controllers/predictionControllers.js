@@ -86,9 +86,11 @@ function oddsFilter(
 }
 
 export const getOdds = async (req, res) => {
-  const { fixture, bet, market_name: name } = req.query;
+  const { fixture, bet, market_name: name, odd_date } = req.query;
   const todayStart = new Date().setHours(0, 0, 0, 0);
   const todayEnd = new Date().setHours(23, 59, 59, 999);
+  const todays_date = new Date(todayStart).toISOString().split("T")[0];
+  const date = odd_date ? odd_date : todays_date;
 
   if (!fixture && !bet)
     return res
@@ -112,7 +114,10 @@ export const getOdds = async (req, res) => {
       }
 
       // Fetch odds from third-party
-      const odds = await fetchOdds({ bet: betId, date: new Date(todayStart) });
+      const odds = await fetchOdds({
+        bet: betId,
+        date,
+      });
 
       // Special cases: double chance or both team score
       const filteredOdds =
@@ -163,6 +168,7 @@ export const createPredictions = async (req, res) => {
   //     ]
   const payload = req.body;
   const user_id = req.user.id;
+  console.log("payload is:", payload);
   console.log("user:", user_id);
   if (!payload)
     return res.status(404).json({ msg: "pls input values for bet" });

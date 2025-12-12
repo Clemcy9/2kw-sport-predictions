@@ -85,14 +85,10 @@ function oddsFilter(
   return filteredOdds;
 }
 
-// get odds :admin via fixture, users via odds_type(called bet)
 export const getOdds = async (req, res) => {
-  // req must have just prediction id (third party) from which we will create our adminPredictions from
-  console.log("getodds> body:", req.query);
-  const fixture = req.query?.fixture;
-  const bet = req.query?.bet;
-  const name = req.query?.market_name; //used 2 distinguish bet with multi values like home/away, over/under ...
-  const date = new Date().toISOString().split("T")[0];
+  const { fixture, bet, market_name: name } = req.query;
+  const todayStart = new Date().setHours(0, 0, 0, 0);
+  const todayEnd = new Date().setHours(23, 59, 59, 999);
 
   if (!fixture && !bet)
     return res
@@ -100,72 +96,91 @@ export const getOdds = async (req, res) => {
       .json({ message: "fixture id or odds type required" });
 
   try {
+    // If bet is provided
     if (bet) {
-      // fetch odds based on bet type and for a particular day
+      const betId = parseInt(bet, 10);
 
-      // let {free_tips_id:100, sure_odds:200, banker:300, free_2_tips:400}
-      // a logic that checks for admin saved odds (adminPredictions)
-      if (parseInt(bet) >= 100) {
-        const query = {
-          "bets.id": bet,
-          "fixture.match_date": {
-            $gte: new Date(`${date}T00:00:00.000Z`),
-            $lte: new Date(`${date}T23:59:59.999Z`),
-          },
-        };
-
-        const adminPredictions = await AdminPrediction.find(query);
-
-        return res.status(200).json({
-          message: "successful",
-          data: adminPredictions,
+      // Admin saved odds for bet >= 100
+      if (betId >= 100) {
+        const adminPredictions = await AdminPrediction.find({
+          "bets.id": betId,
+          "fixture.match_date": { $gte: todayStart, $lte: todayEnd },
         });
+        return res
+          .status(200)
+          .json({ message: "successful", data: adminPredictions });
       }
-      const odds = await fetchOdds({ bet, date });
 
-      // for double chance and both team score filter without market name
-      if (parseInt(bet) === 8 || parseInt(bet) === 12) {
-        return res.status(200).json({
-          message: "successful",
-          data: oddsFilter(odds, 65, 85),
-        });
-      }
-      const cleaned_odds = oddsFilter(odds, 65, 85, name);
-      return res.status(200).json({
-        message: "successful",
-        data: cleaned_odds,
-      });
-    } else {
-      // get odds[] based on a particular fixture, mainly for admin page
+      // Fetch odds from third-party
+      const odds = await fetchOdds({ bet: betId, date: new Date(todayStart) });
+
+      // Special cases: double chance or both team score
+      const filteredOdds =
+        betId === 8 || betId === 12
+          ? oddsFilter(odds, 65, 85)
+          : oddsFilter(odds, 65, 85, name);
+
+      return res
+        .status(200)
+        .json({ message: "successful", data: filteredOdds });
+    }
+
+    // If fixture is provided (mainly admin page)
+    if (fixture) {
       const odds = await fetchOdds({ fixture });
-      const cleaned_data = oddsFilter(
+      const cleanedData = oddsFilter(
         odds,
         65,
         85,
         admin_required_market,
         admin_required_bets
       );
-      res.status(200).json({ message: "successful", data: cleaned_data });
+      return res.status(200).json({ message: "successful", data: cleanedData });
     }
   } catch (error) {
-    console.log(error);
+    console.error("getOdds error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// create predictions: auth required
+// create predictions: auth required. required payload:{bets, fixture_id, admin_bet_type}
 export const createPredictions = async (req, res) => {
   // payload should contain the fixture_id, then a dictionary of {super_single:{bets.id, chosen value}}
+  // predictions = [{fixture_id, bet_type:supersingle, bets}, {fixture_id, bet_type:freeTwoOdds, bets}]
+  // structure of payload
+  // "bets": [
+  //       {
+  //         "id": 100,
+  //         "name": "free_tips",
+  //         "values": [
+  //           {
+  //             "value": "Yes",
+  //             "odd": "1.49",
+  //             "percentage": "67.11"
+  //           }
+  //         ]
+  //       }
+  //     ]
   const payload = req.body;
   const user_id = req.user.id;
   console.log("user:", user_id);
-  if (!payload.bet)
+  if (!payload)
     return res.status(404).json({ msg: "pls input values for bet" });
 
   // create predictions
   try {
-    const prediction = await AdminPrediction.create({ ...payload, user_id });
-    res.status(201).json({ message: "created", data: prediction });
+    // first fetch the odds with given fixture id
+    const predictions = await Promise.all(
+      payload.map(async (admin_predict) => {
+        const fixture = admin_predict.fixture_id;
+        const odd = await fetchOdds({ fixture });
+
+        // modify odd to carry custom admin prediction name and value
+        odd.bets = admin_predict.bets;
+        return await AdminPrediction.create({ ...odd, user_id });
+      })
+    );
+    res.status(201).json({ message: "created", data: predictions });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -204,23 +219,6 @@ export const getPrediction = async (req, res) => {
   }
 };
 
-// update AdminPrediction
-export const updatePrediction = async (req, res) => {
-  try {
-    const updated = await AdminPrediction.findByIdAndUpdate(
-      req.params.id,
-      req.body
-    );
-    res.status(200).json({
-      success: true,
-      message: "AdminPrediction updated successfully",
-      data: updated,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
 // delete AdminPrediction
 export const deletePrediction = async (req, res) => {
   try {
@@ -236,44 +234,19 @@ export const deletePrediction = async (req, res) => {
   }
 };
 
-// to be worked on
-
-// //get all AdminPrediction
-// export const getPrediction = async (req, res) => {
-//   try {
-//     //this add matchId and date to the url when a req is sent to get AdminPrediction for a match or date of match
-//     const { matchId, date } = req.query;
-//     let filter = {}; // this empty query object will contain match_id and date
-
-//     if (matchId) filter.match_id = matchId;
-//     if (date) filter.createdAt = { $gte: new Date(date) };
-
-//     const predictions = await AdminPrediction.find(filter).populate("match_id");
-//     if (!predictions)
-//       return res.status(404).json({ message: "no predctions found" });
-//     res.status(200).json({
-//       success: true,
-//       data: predictions,
-//     });
-//   } catch (error) {
-//     res.status(500).json({ success: false, message: error.message });
-//   }
-// };
-
-// //get a particular AdminPrediction
-// export const getPedictionId = async (req, res) => {
-//   try {
-//     const predictionId = await AdminPrediction.findById(req.params.id).populate(
-//       "match_id"
-//     );
-//     if (!predictionId)
-//       return res.status(404).json({ message: "AdminPrediction not found" });
-//     res.status(200).json({
-//       success: true,
-//       message: "AdminPrediction gotten successfully",
-//       data: predictionId,
-//     });
-//   } catch (error) {
-//     res.status(500).json({ success: false, message: error.message });
-//   }
-// };
+// update AdminPrediction : not functional
+export const updatePrediction = async (req, res) => {
+  try {
+    const updated = await AdminPrediction.findByIdAndUpdate(
+      req.params.id,
+      req.body
+    );
+    res.status(200).json({
+      success: true,
+      message: "AdminPrediction updated successfully",
+      data: updated,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

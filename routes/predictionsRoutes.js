@@ -94,7 +94,8 @@ router.get("/odds", getOdds);
  * @swagger
  * /api/v1/admin/predictions:
  *   post:
- *     summary: Create a new admin prediction
+ *     summary: Create admin predictions
+ *     description: Authenticated endpoint. Creates predictions for a fixture with admin-specified bets.
  *     tags: [Predictions]
  *     security:
  *       - bearerAuth: []
@@ -104,22 +105,85 @@ router.get("/odds", getOdds);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - fixture_id
+ *               - bets
  *             properties:
- *               bet:
- *                 type: number
- *               fixture:
- *                 type: number
- *             example:
- *               bet: 100
- *               fixture: 12345
+ *               fixture_id:
+ *                 type: string
+ *                 description: The ID of the fixture
+ *               bets:
+ *                 type: array
+ *                 description: Array of bets with values
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - id
+ *                     - name
+ *                     - values
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       description: Bet ID
+ *                     name:
+ *                       type: string
+ *                       description: Bet name
+ *                     values:
+ *                       type: array
+ *                       description: Array of chosen values for the bet
+ *                       items:
+ *                         type: object
+ *                         required:
+ *                           - value
+ *                           - odd
+ *                           - percentage
+ *                         properties:
+ *                           value:
+ *                             type: string
+ *                             description: Chosen value for the bet
+ *                           odd:
+ *                             type: string
+ *                             description: Odd for this value
+ *                           percentage:
+ *                             type: string
+ *                             description: Percentage chance for this value
  *     responses:
  *       201:
- *         description: Prediction created successfully
+ *         description: Predictions created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: created
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/AdminPrediction'
  *       400:
- *         description: Missing bet or data
+ *         description: Invalid input (no payload provided)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: Please provide bet values
  *       500:
  *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
  */
+
 router.post("/", authMiddleware, createPredictions);
 
 /**

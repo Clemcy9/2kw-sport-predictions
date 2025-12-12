@@ -1,5 +1,12 @@
 import express from "express";
 import authMiddleware from "../middleware/authMiddleware";
+import {
+  createMetadata,
+  getAllMetadata,
+  getMetadataById,
+  updateMetadata,
+  deleteMetadata
+} from "../controllers/metadataControllers";
 
 const router = express.Router();
 
@@ -12,7 +19,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/metadata/:
+ * /api/v1/metadata:
  *   post:
  *     summary: Create a new metadata
  *     tags: [Metadata]
@@ -39,7 +46,7 @@ router.post("/", authMiddleware, createMetadata);
 
 /**
  * @swagger
- * /api/v1/metadata/:
+ * /api/v1/metadata:
  *   get:
  *     summary: Get all metadata
  *     tags: [Metadata]
@@ -67,25 +74,18 @@ router.get("/", authMiddleware, getAllMetadata);
  *     responses:
  *       200:
  *         description: metadata found successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
  *       404:
  *         description: metadata not found
  *       500:
  *         description: Server error
  */
 router.get("/:id", authMiddleware, getMetadataById);
+
 /**
  * @swagger
  * /api/v1/metadata/{id}:
  *   put:
- *     summary: Update a metadata
+ *     summary: Update metadata
  *     tags: [Metadata]
  *     parameters:
  *       - in: path
@@ -108,29 +108,18 @@ router.get("/:id", authMiddleware, getMetadataById);
  *     responses:
  *       200:
  *         description: metadata updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: metadata updated successfully
  *       404:
- *         description: matadata not found
+ *         description: metadata not found
  *       500:
  *         description: Server error
  */
-router.put("/:id", authMiddleware, updateMetadata)
+router.put("/:id", authMiddleware, updateMetadata);
 
 /**
  * @swagger
- * /api/v1/metadate/{id}:
+ * /api/v1/metadata/{id}:
  *   delete:
- *     summary: Delete a metadata
+ *     summary: Delete metadata
  *     tags: [Metadata]
  *     parameters:
  *       - in: path
@@ -138,21 +127,9 @@ router.put("/:id", authMiddleware, updateMetadata)
  *         required: true
  *         schema:
  *           type: string
- *         description: metadata ID
  *     responses:
  *       204:
  *         description: metadata deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: metadata deleted successfully
  *       404:
  *         description: metadata not found
  *       400:

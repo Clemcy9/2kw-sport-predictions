@@ -110,8 +110,8 @@ export const getOdds = async (req, res) => {
       // Admin saved odds for bet >= 100
       if (betId >= 100) {
         const adminPredictions = await AdminPrediction.find({
-          "bets.id": betId,
-          "fixture.match_date": { $gte: todayStart, $lte: todayEnd },
+          bet_type_id: betId,
+          "fixture.fixture.date": { $gte: todayStart, $lte: todayEnd },
         });
         return res
           .status(200)

@@ -1,6 +1,6 @@
 import MetadataModel from "../models/metaDataModel.js";
 
-const createMetadata = async (req, res) => {
+export const createMetadata = async (req, res) => {
   const { market_type, meta_content } = req.body;
 
   if (!market_type || meta_content)
@@ -24,7 +24,7 @@ const createMetadata = async (req, res) => {
   }
 };
 
-const getAllMetadata = async (req, res) => {
+export const getAllMetadata = async (req, res) => {
   try {
     const meta_datas = await MetadataModel.find();
     return res.status(200).json({ message: "successfull", data: meta_data });
@@ -36,7 +36,7 @@ const getAllMetadata = async (req, res) => {
   }
 };
 
-const getMetadataById = async (req, res) => {
+export const getMetadataById = async (req, res) => {
   const meta_id = req.params.id;
 
   if (!meta_id)
@@ -54,7 +54,7 @@ const getMetadataById = async (req, res) => {
   }
 };
 
-const updateMetadata = async (req, res) => {
+export const updateMetadata = async (req, res) => {
   const meta_id = req.params.id;
   const { market_type, meta_content } = req.body;
 
@@ -83,7 +83,7 @@ const updateMetadata = async (req, res) => {
   }
 };
 
-const deleteMetadata = async (req, res) => {
+export const deleteMetadata = async (req, res) => {
   const meta_id = req.params.id;
 
   if (!meta_id)

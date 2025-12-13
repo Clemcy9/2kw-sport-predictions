@@ -9,6 +9,7 @@ import blogRoutes from "./routes/blogsRoutes.js";
 import adminPredictionRoutes from "./routes/predictionsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import footballRoutes from "./routes/footballRoutes.js";
+import metadataRoutes from "./routes/metadataRoutes.js";
 import { upload } from "./middleware/fileUploadMiddleware.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -67,5 +68,8 @@ app.use("/api/v1/admin/predictions", adminPredictionRoutes);
 
 // admin fixtures
 app.use("/api/v1/football", footballRoutes);
+
+// metadata
+app.use("/api/v1/metadata", metadataRoutes);
 
 export default app;

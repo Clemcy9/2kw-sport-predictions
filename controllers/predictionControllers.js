@@ -160,8 +160,8 @@ export const createPredictions = async (req, res) => {
   // structure of payload
   // "bets": [
   //       {
-  //         "id": 100,
-  //         "name": "free_tips",
+  //         "id": 1,
+  //         "name": "match winner",
   //         "values": [
   //           {
   //             "value": "Yes",
@@ -187,8 +187,15 @@ export const createPredictions = async (req, res) => {
         const odd = await fetchOdds({ fixture });
 
         // modify odd to carry custom admin prediction name and value
-        odd.bets = admin_predict.bets;
-        return await AdminPrediction.create({ ...odd, user_id });
+        // odd.bets = admin_predict.bets;
+        console.log("admin prediction:", odd);
+        return await AdminPrediction.create({
+          ...odd,
+          fixture: odd[0].fixture,
+          bets: admin_predict.bets,
+          bet_type: admin_predict.bet_type,
+          user_id,
+        });
       })
     );
     res.status(201).json({ message: "created", data: predictions });

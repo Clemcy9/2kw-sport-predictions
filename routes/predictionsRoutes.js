@@ -97,13 +97,15 @@ const router = express.Router();
  */
 
 router.get("/odds", getOdds);
-
 /**
  * @swagger
  * /api/v1/admin/predictions:
  *   post:
  *     summary: Create admin predictions
- *     description: Authenticated endpoint. Creates predictions for a fixture with admin-specified bets.
+ *     description: >
+ *       Authenticated endpoint. Creates one or more admin predictions.
+ *       The payload must be an array of prediction objects, each containing
+ *       a fixture_id, bet_type, and its associated bets.
  *     tags: [Predictions]
  *     security:
  *       - bearerAuth: []
@@ -112,54 +114,74 @@ router.get("/odds", getOdds);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - fixture_id
- *               - bets
- *             properties:
- *               fixture_id:
- *                 type: string
- *                 description: The ID of the fixture
- *               bets:
- *                 type: array
- *                 description: Array of bets with values
- *                 items:
- *                   type: object
- *                   required:
- *                     - id
- *                     - name
- *                     - values
- *                   properties:
- *                     id:
- *                       type: integer
- *                       description: Bet ID
- *                     name:
- *                       type: string
- *                       description: Bet name
- *                     values:
- *                       type: array
- *                       description: Array of chosen values for the bet
- *                       items:
- *                         type: object
- *                         required:
- *                           - value
- *                           - odd
- *                           - percentage
- *                         properties:
- *                           value:
- *                             type: string
- *                             description: Chosen value for the bet
- *                           odd:
- *                             type: string
- *                             description: Odd for this value
- *                           percentage:
- *                             type: string
- *                             description: Percentage chance for this value
+ *             type: array
+ *             minItems: 1
+ *             description: Array of admin predictions
+ *             items:
+ *               type: object
+ *               required:
+ *                 - fixture_id
+ *                 - bet_type
+ *                 - bets
+ *               properties:
+ *                 fixture_id:
+ *                   type: string
+ *                   description: The ID of the fixture
+ *                   example: "1339243"
+ *                 bet_type:
+ *                   type: string
+ *                   description: Admin prediction category/type
+ *                   example: "super_single"
+ *                   enum:
+ *                     - super_single
+ *                     - freeTwoOdds
+ *                     - free_tips
+ *                     - sure_bankerd
+ *                 bets:
+ *                   type: array
+ *                   description: Array of bets selected by admin
+ *                   items:
+ *                     type: object
+ *                     required:
+ *                       - id
+ *                       - name
+ *                       - values
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         description: Bet ID
+ *                         example: 1
+ *                       name:
+ *                         type: string
+ *                         description: Bet name
+ *                         example: "Match Winner"
+ *                       values:
+ *                         type: array
+ *                         description: Chosen values for the bet
+ *                         items:
+ *                           type: object
+ *                           required:
+ *                             - value
+ *                             - odd
+ *                             - percentage
+ *                           properties:
+ *                             value:
+ *                               type: string
+ *                               description: Selected value
+ *                               example: "Home"
+ *                             odd:
+ *                               type: string
+ *                               description: Odd for this value
+ *                               example: "1.49"
+ *                             percentage:
+ *                               type: string
+ *                               description: Probability percentage
+ *                               example: "67.11"
  *     responses:
  *       201:
  *         description: Predictions created successfully
  *       400:
- *         description: Invalid input (no payload provided)
+ *         description: Invalid input (missing or malformed payload)
  *       500:
  *         description: Server error
  */

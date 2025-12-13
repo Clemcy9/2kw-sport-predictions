@@ -42,7 +42,7 @@ const adminPredictionSchema = new mongoose.Schema(
     user_id: { type: mongoose.Types.ObjectId, ref: "User", required: true },
     bet_type: {
       type: String,
-      enum: ["free_tips", "super_single", "sure_two_odds", "best_prediction"],
+      enum: ["freeTip", "superSingleTip", "freeOdds", "surePredict"],
     },
     bet_type_id: { type: Number, required: true },
     fixture: {

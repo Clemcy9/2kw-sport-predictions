@@ -201,7 +201,7 @@ export const createPredictions = async (req, res) => {
     );
     res.status(201).json({ message: "created", data: predictions });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error });
   }
 };
 

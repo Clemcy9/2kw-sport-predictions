@@ -5,7 +5,7 @@ import {
   getAllMetadata,
   getMetadataById,
   updateMetadata,
-  deleteMetadata
+  deleteMetadata,
 } from "../controllers/metadataControllers";
 
 const router = express.Router();
@@ -30,7 +30,7 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             properties:
- *               header_sub_content:
+ *               market_type:
  *                 type: string
  *               metadata_content:
  *                 type: string
@@ -101,10 +101,12 @@ router.get("/:id", authMiddleware, getMetadataById);
  *           schema:
  *             type: object
  *             properties:
- *               header_sub_content:
+ *               market_type:
  *                 type: string
+ *                 required: true
  *               metadata_content:
  *                 type: string
+ *                 required: true
  *     responses:
  *       200:
  *         description: metadata updated successfully

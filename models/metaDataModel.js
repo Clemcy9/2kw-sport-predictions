@@ -4,9 +4,18 @@ const metadataSchema = new mongoose.Schema(
   {
     admin_id: { type: mongoose.Types.ObjectId, ref: "admin" },
 
-    header_sub_content: {
+    market_type: {
       type: String,
       required: true,
+      enum: [
+        "freeTip",
+        "superSingleTip",
+        "freeOdds",
+        "surePredict",
+        "match winner",
+        "double chance",
+        "over and Under",
+      ],
     },
 
     metadata_content: {

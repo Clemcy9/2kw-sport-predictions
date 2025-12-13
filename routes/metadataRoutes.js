@@ -1,12 +1,12 @@
 import express from "express";
-import authMiddleware from "../middleware/authMiddleware";
+import authMiddleware from "../middleware/authMiddleware.js";
 import {
   createMetadata,
   getAllMetadata,
   getMetadataById,
   updateMetadata,
   deleteMetadata,
-} from "../controllers/metadataControllers";
+} from "../controllers/metadataControllers.js";
 
 const router = express.Router();
 

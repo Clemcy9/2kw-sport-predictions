@@ -194,6 +194,7 @@ export const createPredictions = async (req, res) => {
           fixture: odd[0].fixture,
           bets: admin_predict.bets,
           bet_type: admin_predict.bet_type,
+          bet_type_id: admin_predict.bet_type_id,
           user_id,
         });
       })

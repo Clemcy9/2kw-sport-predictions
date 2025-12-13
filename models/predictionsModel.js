@@ -82,7 +82,7 @@ const adminPredictionSchema = new mongoose.Schema(
             percentage: String, //dynamically calculated
           },
         ],
-        required: true,
+        // required: true,
       },
     ],
   },

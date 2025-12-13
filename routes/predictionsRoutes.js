@@ -122,12 +122,17 @@ router.get("/odds", getOdds);
  *               required:
  *                 - fixture_id
  *                 - bet_type
+ *                 - bet_type_id
  *                 - bets
  *               properties:
  *                 fixture_id:
  *                   type: string
  *                   description: The ID of the fixture
  *                   example: "1339243"
+ *                 bet_type_id:
+ *                   type: number
+ *                   description: Admin prediction category/type id
+ *                   example: 100
  *                 bet_type:
  *                   type: string
  *                   description: Admin prediction category/type

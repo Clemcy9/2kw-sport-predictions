@@ -49,7 +49,9 @@ export const createBlog = async (req, res) => {
 // get blog
 export const getBlogs = async (req, res) => {
   try {
-    const blog = await Blog.find().populate("user", "email");
+    const blog = await Blog.find()
+      .populate("user", "email")
+      .sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       data: blog,

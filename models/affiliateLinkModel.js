@@ -2,10 +2,11 @@ import mongoose from "mongoose";
 
 const affiliateLinkSchema = new mongoose.Schema(
   {
-    admin_id: { type: mongoose.Types.ObjectId, ref: "admin" },
+    admin_id: { type: mongoose.Types.ObjectId, ref: "admin", required: true },
 
     link_type: {
       type: String,
+      enum: ["nav_bar", "footer"],
       required: true,
     },
 

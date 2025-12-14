@@ -12,6 +12,7 @@ export const createMetadata = async (req, res) => {
     const meta_data = await MetadataModel.create({
       market_type,
       metadata_content,
+      admin_id: req.user.id,
     });
     return res
       .status(201)
@@ -26,7 +27,7 @@ export const createMetadata = async (req, res) => {
 
 export const getAllMetadata = async (req, res) => {
   try {
-    const meta_datas = await MetadataModel.find();
+    const meta_datas = await MetadataModel.find().sort({ createdAt: -1 });
     return res.status(200).json({ message: "successfull", data: meta_datas });
   } catch (error) {
     console.log("error occured:", error);

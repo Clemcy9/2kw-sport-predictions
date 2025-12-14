@@ -10,6 +10,7 @@ import adminPredictionRoutes from "./routes/predictionsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import footballRoutes from "./routes/footballRoutes.js";
 import metadataRoutes from "./routes/metadataRoutes.js";
+import affiliateRoutes from "./routes/affiliateLinkRoutes.js";
 import { upload } from "./middleware/fileUploadMiddleware.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -72,4 +73,6 @@ app.use("/api/v1/football", footballRoutes);
 // metadata
 app.use("/api/v1/metadata", metadataRoutes);
 
+// affiliate links
+app.use("/api/v1/affiliatelinks", affiliateRoutes);
 export default app;

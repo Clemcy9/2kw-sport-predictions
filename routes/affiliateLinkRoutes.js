@@ -16,7 +16,6 @@ const router = express.Router();
  *   name: AffiliateLinks
  *   description: CRUD operations for Affiliate Links
  */
-
 /**
  * @swagger
  * /api/v1/affiliatelinks:
@@ -34,20 +33,25 @@ const router = express.Router();
  *               - location
  *               - label
  *               - url
- *               - status
  *             properties:
  *               link_type:
  *                 type: string
+ *                 enum: [nav_bar, footer]
+ *                 example: nav_bar
  *               location:
  *                 type: string
+ *                 example: homepage
  *               label:
  *                 type: string
+ *                 example: Visit Partner
  *               url:
  *                 type: string
+ *                 example: https://example.com
  *                 description: Must start with http:// or https://
  *               status:
  *                 type: string
  *                 enum: [draft, published]
+ *                 example: published
  *     responses:
  *       201:
  *         description: Affiliate link created successfully
@@ -56,6 +60,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
+
 router.post("/", authMiddleware, createAffiliateLink);
 
 /**
@@ -117,15 +122,21 @@ router.get("/:id", authMiddleware, getAffiliateLinkById);
  *             properties:
  *               link_type:
  *                 type: string
+ *                 enum: [nav_bar, footer]
+ *                 example: footer
  *               location:
  *                 type: string
+ *                 example: about-page
  *               label:
  *                 type: string
+ *                 example: Partner Link
  *               url:
  *                 type: string
+ *                 example: https://partner.com
  *               status:
  *                 type: string
  *                 enum: [draft, published]
+ *                 example: draft
  *     responses:
  *       200:
  *         description: Affiliate link updated successfully

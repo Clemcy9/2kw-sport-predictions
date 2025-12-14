@@ -26,10 +26,15 @@ async function getCached(endpoint, params) {
   }
 }
 
-async function setCached(endpoint, value, params = {}) {
-  const TTL = parseInt(process.env.CACHE_TTL_SECONDS);
+async function setCached(
+  endpoint,
+  value,
+  params = {},
+  duration = parseInt(process.env.CACHE_TTL_SECONDS)
+) {
+  // const TTL = parseInt(process.env.CACHE_TTL_SECONDS);
   const key = keyfor(endpoint, params);
-  await redisClient.setEx(key, TTL, JSON.stringify(value));
+  await redisClient.setEx(key, duration, JSON.stringify(value));
 }
 
 async function invalidateCached(endpoint, params = {}) {

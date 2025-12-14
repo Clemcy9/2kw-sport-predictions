@@ -227,7 +227,7 @@ async function fetchOdds(args) {
     // );
 
     // 6️⃣ CACHE RESULT
-    await setCached("odds", cleaned, params);
+    await setCached("odds", cleaned, params, 10800);
 
     return cleaned;
   } catch (error) {
@@ -244,7 +244,7 @@ async function fetchLiveScore() {
 
   try {
     const res = await api_client.get("/fixtures", { params });
-    await setCached("livescore", res.data, params);
+    await setCached("livescore", res.data, params, 60);
     return res.data;
   } catch (error) {
     if (error.response)
@@ -264,7 +264,7 @@ async function fetchStandings(args) {
 
   try {
     const res = await api_client.get("/standings", { params });
-    await setCached("standings", res.data, params);
+    await setCached("standings", res.data, params, 3600);
     return res.data;
   } catch (error) {
     if (error.response)

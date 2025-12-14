@@ -46,6 +46,9 @@ export const getMetadataById = async (req, res) => {
 
   try {
     const meta_data = await MetadataModel.findOne({ _id: meta_id });
+
+    if (!meta_data)
+      return res.status(404).json({ message: "meta_data not exist" });
     return res.status(200).json({ message: "successfull", data: meta_data });
   } catch (error) {
     console.log("error occured:", error);
@@ -73,6 +76,9 @@ export const updateMetadata = async (req, res) => {
       { _id: meta_id },
       { market_type, metadata_content }
     );
+
+    if (!meta_datas)
+      return res.status(404).json({ message: "meta_datas not exist" });
     return res
       .status(200)
       .json({ message: "updated successfull", data: meta_datas });
@@ -93,6 +99,9 @@ export const deleteMetadata = async (req, res) => {
       .json({ message: "id is required in path parameter" });
   try {
     const meta_datas = await MetadataModel.findOneAndDelete({ _id: meta_id });
+
+    if (!meta_datas)
+      return res.status(404).json({ message: "meta_datas not exist" });
     return res.status(200).json({ message: "deleted successfull" });
   } catch (error) {
     console.log("error occured:", error);

@@ -211,32 +211,26 @@ router.get("/", authMiddleware, getAllPredictions);
 
 /**
  * @swagger
- * /api/v1/admin/predictions/single:
- *   post:
+ * /api/v1/admin/predictions/{id}:
+ *   get:
  *     summary: Get a specific prediction by ID
  *     tags: [Predictions]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               prediction_id:
- *                 type: string
- *             example:
- *               prediction_id: "671612b7d3c53c6f246a8c12"
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: prediction ID
  *     responses:
  *       200:
- *         description: Prediction retrieved successfully
- *       400:
- *         description: prediction_id missing
+ *         description: prediction found successfully
+ *       404:
+ *         description: prediction not found
  *       500:
  *         description: Server error
  */
-router.post("/single", authMiddleware, getPrediction);
+router.get("/:id", authMiddleware, getPrediction);
 
 /**
  * @swagger

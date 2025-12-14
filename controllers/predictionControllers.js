@@ -222,16 +222,18 @@ export const getAllPredictions = async (req, res) => {
 
 // get a particular prediction :admin only
 export const getPrediction = async (req, res) => {
-  const user = req.body.user; //gotten from authMiddleware
-  const prediction_id = req.body?.prediction_id;
+  const prediction_id = req.params?.id;
 
   if (!prediction_id)
     return res.status(400).json({ message: "prediction_id is required" });
   try {
     // get a particular predictions created by a particular admin
-    const prediction = await AdminPrediction.find({ user_id: user.id }).select(
-      "-timestamps -"
-    );
+    const prediction = await AdminPrediction.find({
+      _id: prediction_id,
+    }).select("-timestamps");
+
+    if (!prediction)
+      return res.status(404).json({ message: "prediction not exist" });
     res.status(200).json({ message: "successful", data: prediction });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,6 +1,6 @@
 import { fetchHead2Head } from "../services/thirdparty.service";
 
-async function getHead2Head(req, res) {
+export async function getHead2Head(req, res) {
   try {
     const { teamA_id, teamB_id } = req.query;
 
@@ -24,4 +24,4 @@ async function getHead2Head(req, res) {
   }
 }
 
-export { getHead2Head };
+

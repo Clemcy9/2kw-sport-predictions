@@ -1,5 +1,5 @@
 import express from "express";
-import { getHead2Head } from "../controllers/head2head.controller";
+import { getHead2Head } from "../controllers/head2headController.js";
 
 const router = express.Router();
 

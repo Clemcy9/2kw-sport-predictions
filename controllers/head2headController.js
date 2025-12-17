@@ -12,7 +12,7 @@ export async function getHead2Head(req, res) {
 
     const head2head = await fetchHead2Head(teamA_id, teamB_id);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "successful",
       data: head2head,
     });

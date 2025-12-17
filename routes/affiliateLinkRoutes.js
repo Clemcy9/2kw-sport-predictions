@@ -30,20 +30,16 @@ const router = express.Router();
  *             type: object
  *             required:
  *               - link_type
- *               - location
  *               - label
  *               - url
  *             properties:
  *               link_type:
  *                 type: string
- *                 enum: [nav_bar, footer]
- *                 example: nav_bar
- *               location:
- *                 type: string
- *                 example: homepage
+ *                 enum: [navbar, footer]
+ *                 example: navbar
  *               label:
  *                 type: string
- *                 example: Visit Partner
+ *                 example: link name
  *               url:
  *                 type: string
  *                 example: https://example.com

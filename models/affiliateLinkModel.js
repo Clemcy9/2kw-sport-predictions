@@ -6,14 +6,10 @@ const affiliateLinkSchema = new mongoose.Schema(
 
     link_type: {
       type: String,
-      enum: ["nav_bar", "footer"],
+      enum: ["navbar", "footer"],
       required: true,
     },
 
-    location: {
-      type: String,
-      required: true,
-    },
 
     label: {
       type: String,

@@ -11,6 +11,7 @@ import authRoutes from "./routes/authRoutes.js";
 import footballRoutes from "./routes/footballRoutes.js";
 import metadataRoutes from "./routes/metadataRoutes.js";
 import affiliateRoutes from "./routes/affiliateLinkRoutes.js";
+import head2head from "./routes/head2headRouters.js"
 import { upload } from "./middleware/fileUploadMiddleware.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -75,4 +76,8 @@ app.use("/api/v1/metadata", metadataRoutes);
 
 // affiliate links
 app.use("/api/v1/affiliatelinks", affiliateRoutes);
+
+// head2head
+app.use("/api/v1/head2head", head2head);
+
 export default app;

@@ -238,7 +238,7 @@ async function fetchOdds(args) {
 
 async function fetchLiveScore() {
   const params = { live: "all" };
-  const cached = await getCached("predictions", params);
+  const cached = await getCached("livescore", params);
 
   if (cached) return cached;
 
@@ -251,6 +251,27 @@ async function fetchLiveScore() {
       console.log("FetchLiveScoreError1:", error.response.data);
     if (error.request) console.log("FetchLiveScoreError2:", error.request);
     else console.log("FetchLiveScoreError3:", error.message);
+  }
+}
+
+async function fetchHead2Head(teamA_id, teamB_id) {
+  const params = { h2h:`${teamA_id}-${teamB_id}` };
+  const cached = await getCached("headtohead", params);
+
+  if (cached) return cached;
+
+  try {
+    const res = await api_client.get("/fixtures/headtohead", { params });
+    await setCached("headtohead", res.data, params, 43200);
+    return res.data;
+  } catch (error) {
+    if (error.response) {
+      console.log("FetchHead2HeadError1:", error.response.data);
+    } else if (error.request) {
+      console.log("FetchHead2HeadError2:", error.request);
+    } else {
+      console.log("FetchHead2HeadError3:", error.message);
+    }
   }
 }
 
@@ -303,4 +324,5 @@ export {
   fetchPredictions,
   fetchStandings,
   fetchTopPlayer,
+  fetchHead2Head,
 };

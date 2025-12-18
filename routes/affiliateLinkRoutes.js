@@ -39,7 +39,7 @@ const router = express.Router();
  *                 example: navbar
  *               label:
  *                 type: string
- *                 example: link name
+ *                 example: link name for URL
  *               url:
  *                 type: string
  *                 example: https://example.com

@@ -1,4 +1,4 @@
-import { fetchHead2Head } from "../services/thirdparty.service";
+import { fetchHead2Head } from "../services/thirdparty.service.js";
 
 export async function getHead2Head(req, res) {
   try {

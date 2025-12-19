@@ -255,7 +255,7 @@ async function fetchLiveScore() {
 }
 
 async function fetchHead2Head(teamA_id, teamB_id) {
-  const params = { h2h:`${teamA_id}-${teamB_id}` };
+  const params = { h2h:`${teamA_id}-${teamB_id}`, last: 5 };
   const cached = await getCached("headtohead", params);
 
   if (cached) return cached;

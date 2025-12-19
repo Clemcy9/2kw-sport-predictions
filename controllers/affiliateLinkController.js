@@ -8,9 +8,9 @@ import AffiliateLinkModel from "../models/affiliateLinkModel.js";
  */
 export const createAffiliateLink = async (req, res) => {
   try {
-    const { link_type, location, label, url, status } = req.body;
+    const { link_type, label, url, status } = req.body;
 
-    if (!link_type || !location || !label || !url) {
+    if (!link_type || !label || !url) {
       return res.status(400).json({
         message: "Missing required fields",
       });
@@ -19,7 +19,6 @@ export const createAffiliateLink = async (req, res) => {
     const affiliateLink = await AffiliateLinkModel.create({
       admin_id: req.user.id,
       link_type,
-      location,
       label,
       url,
       status,

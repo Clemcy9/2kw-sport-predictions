@@ -120,9 +120,7 @@ router.get("/:id", authMiddleware, getAffiliateLinkById);
  *                 type: string
  *                 enum: [nav_bar, footer]
  *                 example: footer
- *               location:
- *                 type: string
- *                 example: about-page
+ *               
  *               label:
  *                 type: string
  *                 example: Partner Link

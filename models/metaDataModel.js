@@ -6,6 +6,7 @@ const metadataSchema = new mongoose.Schema(
 
     market_type: {
       type: String,
+      unique: true,
       required: true,
       enum: [
         "freeTip",
@@ -30,6 +31,8 @@ const metadataSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// metadataSchema.index({ user: 1, market_type: 1 }, { unique: true });
 
 const MetadataModel = mongoose.model("Metadata", metadataSchema);
 

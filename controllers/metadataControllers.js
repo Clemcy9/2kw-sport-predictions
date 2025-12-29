@@ -47,10 +47,7 @@ export const createMetadata = async (req, res) => {
   }
 };
 
-/**
- * GET all metadata (only user's own)
- * Optional filter: market_type
- */
+// Get all metadata
 export const getAllMetadata = async (req, res) => {
   try {
     const { market_type } = req.query;
@@ -82,7 +79,7 @@ export const getAllMetadata = async (req, res) => {
 };
 
 /**
- * GET metadata by ID (ownership enforced)
+ * GET metadata by ID
  */
 export const getMetadataById = async (req, res) => {
   try {
@@ -97,7 +94,7 @@ export const getMetadataById = async (req, res) => {
 
     const metadata = await MetadataModel.findOne({
       _id: id,
-      user: req.user.id,
+      // user: req.user.id,
     });
 
     if (!metadata) {
@@ -113,6 +110,43 @@ export const getMetadataById = async (req, res) => {
     });
   } catch (error) {
     console.error("Get Metadata By ID Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching metadata",
+    });
+  }
+};
+
+// Get metadata by markettype
+export const getMetadataByMarketType = async (req, res) => {
+  try {
+    const { market_type } = req.params;
+
+    if (!market_type) {
+      return res.status(400).json({
+        success: false,
+        message: "market_type is required",
+      });
+    }
+
+    const metadata = await MetadataModel.findOne({
+      market_type,
+      // user: req.user.id,
+    });
+
+    if (!metadata) {
+      return res.status(404).json({
+        success: false,
+        message: "Metadata not found for this market type",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: metadata,
+    });
+  } catch (error) {
+    console.error("Get Metadata By Market Type Error:", error);
     return res.status(500).json({
       success: false,
       message: "Server error while fetching metadata",
@@ -138,7 +172,10 @@ export const updateMetadata = async (req, res) => {
     delete req.body.user;
 
     const updatedMetadata = await MetadataModel.findOneAndUpdate(
-      { _id: id, user: req.user.id },
+      {
+        _id: id,
+        //  user: req.user.id
+      },
       { $set: req.body },
       { new: true, runValidators: true }
     );
@@ -165,7 +202,7 @@ export const updateMetadata = async (req, res) => {
 };
 
 /**
- * DELETE metadata (ownership enforced)
+ * DELETE metadata
  */
 export const deleteMetadata = async (req, res) => {
   try {
@@ -180,7 +217,7 @@ export const deleteMetadata = async (req, res) => {
 
     const deletedMetadata = await MetadataModel.findOneAndDelete({
       _id: id,
-      user: req.user.id,
+      // user: req.user.id,
     });
 
     if (!deletedMetadata) {

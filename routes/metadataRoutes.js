@@ -1,6 +1,5 @@
 import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
-import express from "express";
 import {
   createMetadata,
   getAllMetadata,

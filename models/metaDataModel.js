@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const metadataSchema = new mongoose.Schema(
   {
-    admin_id: { type: mongoose.Types.ObjectId, ref: "admin", required: true },
+    user: { type: mongoose.Types.ObjectId, ref: "user", required: true },
 
     market_type: {
       type: String,

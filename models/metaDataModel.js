@@ -17,6 +17,11 @@ const metadataSchema = new mongoose.Schema(
         "over and Under",
       ],
     },
+    page_title: String,
+    page_description: String,
+    page_keywords: String,
+    header_content: String,
+    header_sub_content: String,
 
     metadata_content: {
       type: String,

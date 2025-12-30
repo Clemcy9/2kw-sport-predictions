@@ -42,7 +42,7 @@ export const createMetadata = async (req, res) => {
     console.error("Create Metadata Error:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error while creating metadata",
+      message: `Server error:${error}`,
     });
   }
 };

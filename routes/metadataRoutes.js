@@ -51,6 +51,11 @@ const router = express.Router();
  *             - double chance
  *             - over and Under
  *             - btts
+ *             - about
+ *             - allPrediction
+ *             - contactUs
+ *             - services
+ *             - homePage
  *         page_title:
  *           type: string
  *         page_description:
@@ -199,6 +204,11 @@ router.get("/:id", authMiddleware, getMetadataById);
  *             - double chance
  *             - over and Under
  *             - btts
+ *             - about
+ *             - allPrediction
+ *             - contactUs
+ *             - services
+ *             - homePage
  *         description: Market type
  *     responses:
  *       200:

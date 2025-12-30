@@ -56,6 +56,8 @@ const router = express.Router();
  *             - contactUs
  *             - services
  *             - homePage
+ *             - home win
+ *             - away win
  *         page_title:
  *           type: string
  *         page_description:
@@ -209,6 +211,8 @@ router.get("/:id", authMiddleware, getMetadataById);
  *             - contactUs
  *             - services
  *             - homePage
+ *             - home win
+ *             - away win
  *         description: Market type
  *     responses:
  *       200:

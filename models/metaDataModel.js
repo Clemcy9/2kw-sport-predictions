@@ -22,6 +22,8 @@ const metadataSchema = new mongoose.Schema(
         "contactUs",
         "services",
         "homePage",
+        "home win",
+        "away win",
       ],
     },
     page_title: String,

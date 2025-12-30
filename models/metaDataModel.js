@@ -16,6 +16,7 @@ const metadataSchema = new mongoose.Schema(
         "match winner",
         "double chance",
         "over and Under",
+        "btts",
       ],
     },
     page_title: String,

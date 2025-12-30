@@ -50,6 +50,7 @@ const router = express.Router();
  *             - match winner
  *             - double chance
  *             - over and Under
+ *             - btts
  *         page_title:
  *           type: string
  *         page_description:
@@ -197,6 +198,7 @@ router.get("/:id", authMiddleware, getMetadataById);
  *             - match winner
  *             - double chance
  *             - over and Under
+ *             - btts
  *         description: Market type
  *     responses:
  *       200:

@@ -35,6 +35,12 @@ const router = express.Router();
  *         image_url:
  *           type: string
  *           example: "http://localhost:5000/uploads/123456789.png"
+ *         blogKeywords:
+ *           type: string
+ *           example: "football prediction "
+ *         description: string
+ *           type: string
+ *           example: "this is description"
  *         views:
  *           type: integer
  *           example: 0

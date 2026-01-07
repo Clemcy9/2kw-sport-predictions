@@ -8,6 +8,8 @@ const blogSchema = mongoose.Schema(
     body: { type: String, required: true },
     image_url: { type: String },
     views: { type: Number, default: 0 },
+    blogKeywords: String,
+    description: String,
     status: {
       type: String,
       enum: ["draft", "published", "seo"],

@@ -37,8 +37,8 @@ const router = express.Router();
  *           example: "http://localhost:5000/uploads/123456789.png"
  *         blogKeywords:
  *           type: string
- *           example: "football prediction "
- *         description: string
+ *           example: "football prediction"
+ *         description:
  *           type: string
  *           example: "this is description"
  *         views:
@@ -57,7 +57,6 @@ const router = express.Router();
  *           format: date-time
  *           example: "2025-11-29T20:00:00.000Z"
  */
-
 /**
  * @swagger
  * /api/v1/blogs/:
@@ -79,6 +78,14 @@ const router = express.Router();
  *                 type: string
  *                 description: Blog content
  *                 example: "This is the body of my first blog post"
+ *               description:
+ *                 type: string
+ *                 description: Short SEO-friendly description of the blog
+ *                 example: "A short overview of the blog post"
+ *               blogKeywords:
+ *                 type: string
+ *                 description: SEO keywords related to the blog post
+ *                 example: "football prediction, betting tips"
  *               status:
  *                 type: string
  *                 description: Blog status
@@ -110,6 +117,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
+
 router.post("/", authMiddleware, upload.single("image"), createBlog);
 
 /**
